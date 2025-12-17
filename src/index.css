@@ -1,0 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.player-container {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar {
+  height: 1rem;
+  position: relative;
+}
+
+#progress-fill {
+  transition: width 0.1s linear;
+  will-change: width;
+}
+
+.volume-bar {
+  height: 4px;
+  background-color: #334155;
+  border-radius: 2px;
+}
+
+.volume-progress {
+  height: 100%;
+  background-color: #f8fafc;
+  border-radius: 2px;
+  width: 70%;
+}
+
+.track-card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+.genre-card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+.playlist-card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+.playlist-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.playlist-scroll::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 3px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #334155;
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #f97316;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #f97316;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
