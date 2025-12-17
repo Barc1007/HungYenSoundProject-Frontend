@@ -14,6 +14,7 @@ import Profile from "./pages/Profile"
 import MyPlaylists from "./pages/MyPlaylists"
 import AdminUploads from "./pages/AdminUploads"
 import TrackDetail from "./pages/TrackDetail"
+import LikedSongs from "./pages/LikedSongs"
 
 function App() {
   return (
@@ -30,21 +31,29 @@ function App() {
                   <Route path="/search" element={<Search />} />
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="/track/:id" element={<TrackDetail />} />
-                  <Route 
-                    path="/my-playlists" 
+                  <Route
+                    path="/liked-songs"
+                    element={
+                      <ProtectedRoute>
+                        <LikedSongs />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/my-playlists"
                     element={
                       <ProtectedRoute>
                         <MyPlaylists />
                       </ProtectedRoute>
-                    } 
+                    }
                   />
-                  <Route 
-                    path="/profile" 
+                  <Route
+                    path="/profile"
                     element={
                       <ProtectedRoute>
                         <Profile />
                       </ProtectedRoute>
-                    } 
+                    }
                   />
                   <Route
                     path="/admin/uploads"

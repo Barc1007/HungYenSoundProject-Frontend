@@ -10,32 +10,6 @@ import TrackCard from "../components/TrackCard"
 import { useAudio } from "../context/AudioContext"
 import trackService from "../services/trackService"
 
-const playlists = [
-  {
-    id: 1,
-    title: "Chill Vibes",
-    image: "http://static.photos/music/640x360/6",
-    tracks: 120,
-    duration: "8h 42m",
-    description: "Relaxing beats for your downtime. Perfect for studying or unwinding.",
-  },
-  {
-    id: 2,
-    title: "Workout Energy",
-    image: "http://static.photos/music/640x360/7",
-    tracks: 85,
-    duration: "5h 15m",
-    description: "High-energy tracks to power through your workout sessions.",
-  },
-  {
-    id: 3,
-    title: "Focus Flow",
-    image: "http://static.photos/music/640x360/8",
-    tracks: 65,
-    duration: "4h 30m",
-    description: "Concentration-boosting music to help you stay productive and focused.",
-  },
-]
 
 export default function Home() {
   const { playTrack } = useAudio()
@@ -47,11 +21,11 @@ export default function Home() {
       try {
         setLoadingTracks(true)
         // Get latest approved tracks (works for all users)
-        const data = await trackService.getTracks({ 
+        const data = await trackService.getTracks({
           source: "local",
-          limit: 6, 
-          sortBy: "createdAt", 
-          sortOrder: "desc" 
+          limit: 6,
+          sortBy: "createdAt",
+          sortOrder: "desc"
         })
         setTracks(data)
       } catch (err) {
@@ -116,7 +90,7 @@ export default function Home() {
                     key={track.id || track.mongoId}
                     track={track}
                     onUpdate={(updated) => {
-                      setTracks(tracks.map(t => 
+                      setTracks(tracks.map(t =>
                         (t.id || t.mongoId) === (updated.id || updated.mongoId) ? updated : t
                       ))
                     }}
@@ -126,44 +100,6 @@ export default function Home() {
             )}
           </section>
         )}
-
-        {/* Popular Playlists */}
-        <section className="mb-12">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Popular Playlists</h2>
-            <a href="#" className="text-orange-400 hover:text-orange-300 transition flex items-center">
-              View All <ChevronRight className="ml-1 w-5 h-5" />
-            </a>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {playlists.map((playlist) => (
-              <div key={playlist.id} className="bg-slate-800/50 rounded-xl overflow-hidden">
-                <div className="relative">
-                  <img
-                    src={playlist.image || "/placeholder.svg"}
-                    alt={playlist.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                    <div>
-                      <h3 className="font-bold text-xl">{playlist.title}</h3>
-                      <p className="text-orange-300 text-sm">
-                        {playlist.tracks} tracks • {playlist.duration}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <p className="text-slate-300 mb-4">{playlist.description}</p>
-                  <button className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg font-medium transition flex items-center justify-center">
-                    <Play className="mr-2 w-4 h-4" />
-                    Play Playlist
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
       <Footer />
       <AudioPlayer />

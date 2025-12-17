@@ -191,8 +191,6 @@ export default function TrackDetail() {
                 <span>•</span>
                 <span>Thời lượng: {track.duration || "0:00"}</span>
                 <span>•</span>
-                <span>{track.playCount || 0} lượt nghe</span>
-                <span>•</span>
                 <span>Đăng tải: {formatDate(track.createdAt)}</span>
               </div>
 
@@ -208,8 +206,8 @@ export default function TrackDetail() {
                   onClick={handleLike}
                   disabled={isLiking || !user}
                   className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition ${isLiked
-                      ? "bg-red-600/20 text-red-400 hover:bg-red-600/30"
-                      : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                    ? "bg-red-600/20 text-red-400 hover:bg-red-600/30"
+                    : "bg-slate-700 text-slate-300 hover:bg-slate-600"
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />

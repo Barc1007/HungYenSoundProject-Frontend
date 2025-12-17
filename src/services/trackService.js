@@ -233,6 +233,40 @@ export const trackService = {
       throw error.response?.data || { message: "Failed to update track image" };
     }
   },
+
+  // Increment track play count
+  async incrementTrackPlayCount(trackId) {
+    try {
+      const response = await api.post(`/tracks/${trackId}/play`);
+
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || "Failed to increment play count");
+      }
+
+      return response.data.data.playCount;
+    } catch (error) {
+      // Silently fail - play count is not critical
+      console.warn("Increment track play count error:", error);
+      return null;
+    }
+  },
+
+  // Increment playlist play count
+  async incrementPlaylistPlayCount(playlistId) {
+    try {
+      const response = await api.post(`/playlists/${playlistId}/play`);
+
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || "Failed to increment play count");
+      }
+
+      return response.data.data.playCount;
+    } catch (error) {
+      // Silently fail - play count is not critical
+      console.warn("Increment playlist play count error:", error);
+      return null;
+    }
+  },
 };
 
 export default trackService;

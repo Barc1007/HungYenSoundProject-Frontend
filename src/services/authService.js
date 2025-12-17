@@ -89,7 +89,7 @@ export const authService = {
     try {
       const formData = new FormData();
       formData.append('avatar', file);
-      
+
       const response = await api.post('/uploads/avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -108,6 +108,21 @@ export const authService = {
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Failed to change password' };
+    }
+  },
+
+  // Delete account
+  async deleteAccount(password) {
+    try {
+      const response = await api.delete('/auth/delete-account', {
+        data: { password }
+      });
+      // Clear local storage after successful deletion
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to delete account' };
     }
   },
 

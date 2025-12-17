@@ -163,18 +163,17 @@ export default function AddSongsModal({ isOpen, onClose, playlistId }) {
                 <div
                   key={song.id}
                   onClick={() => !isAlreadyInPlaylist && handleToggleSong(song)}
-                  className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition ${
-                    isAlreadyInPlaylist
+                  className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition ${isAlreadyInPlaylist
                       ? "bg-slate-700/50 opacity-50 cursor-not-allowed"
                       : isSelected
                         ? "bg-orange-600/20 border border-orange-500"
                         : "bg-slate-700/50 hover:bg-slate-700"
-                  }`}
+                    }`}
                 >
-                  <img 
-                    src={song.image || "/placeholder.svg"} 
-                    alt={song.title} 
-                    className="w-12 h-12 rounded object-cover" 
+                  <img
+                    src={song.image || "/placeholder.svg"}
+                    alt={song.title}
+                    className="w-12 h-12 rounded object-cover"
                   />
                   <div className="flex-1">
                     <p className="font-medium">{song.title}</p>
@@ -185,9 +184,6 @@ export default function AddSongsModal({ isOpen, onClose, playlistId }) {
                   </div>
                   <div className="text-right">
                     <span className="text-sm text-slate-400">{song.duration}</span>
-                    {song.playCount > 0 && (
-                      <p className="text-xs text-slate-500">{song.playCount.toLocaleString()} plays</p>
-                    )}
                   </div>
                   <div className="w-6 h-6 rounded border-2 border-slate-500 flex items-center justify-center">
                     {isSelected && <Check className="w-4 h-4 text-orange-500" />}

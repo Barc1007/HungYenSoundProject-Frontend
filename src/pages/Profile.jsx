@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, Users, LogOut, Upload, Camera, Eye, EyeOff, Lock } from "lucide-react"
+import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, Users, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Sparkles } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
@@ -32,6 +32,10 @@ export default function Profile() {
     confirm: false
   })
   const [changingPassword, setChangingPassword] = useState(false)
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false)
+  const [deletePassword, setDeletePassword] = useState('')
+  const [showDeletePassword, setShowDeletePassword] = useState(false)
+  const [deletingAccount, setDeletingAccount] = useState(false)
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -84,9 +88,8 @@ export default function Profile() {
     try {
       setUploadingAvatar(true)
       const response = await authService.uploadAvatar(file)
-      
+
       if (response.success && response.data.user) {
-        // Update user context with new avatar
         updateUser(response.data.user)
         showSuccess('Cập nhật ảnh đại diện thành công!')
       }
@@ -95,7 +98,6 @@ export default function Profile() {
       showError(error.message || 'Không thể tải lên ảnh đại diện')
     } finally {
       setUploadingAvatar(false)
-      // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -104,8 +106,7 @@ export default function Profile() {
 
   const handleChangePassword = async (e) => {
     e.preventDefault()
-    
-    // Validation
+
     if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
       showError('Vui lòng điền đầy đủ thông tin')
       return
@@ -150,222 +151,278 @@ export default function Profile() {
     }
   }
 
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault()
+
+    if (!deletePassword) {
+      showError('Vui lòng nhập mật khẩu để xác nhận')
+      return
+    }
+
+    try {
+      setDeletingAccount(true)
+      const response = await authService.deleteAccount(deletePassword)
+
+      if (response.success) {
+        showSuccess('Tài khoản đã được xóa thành công')
+        logout()
+        setTimeout(() => {
+          navigate('/')
+        }, 1500)
+      }
+    } catch (error) {
+      console.error('Delete account error:', error)
+      showError(error.message || 'Không thể xóa tài khoản')
+    } finally {
+      setDeletingAccount(false)
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col pb-32">
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
-        {/* Header */}
-        <div className="flex items-center mb-8">
-          <Link to="/" className="text-orange-400 hover:text-orange-300 transition flex items-center mr-4">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <h1 className="text-3xl font-bold">My Profile</h1>
-        </div>
+      <main className="max-w-5xl mx-auto px-4 py-8 flex-1 w-full">
+        {/* Back Button */}
+        <Link to="/" className="inline-flex items-center text-orange-400 hover:text-orange-300 transition mb-6 group">
+          <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+          <span>Back to Home</span>
+        </Link>
 
         {/* Success Message */}
         {saveSuccess && (
-          <div className="mb-6 bg-green-900/30 border border-green-600 text-green-300 px-4 py-3 rounded-lg flex items-center">
-            <span>✓ Profile updated successfully!</span>
+          <div className="mb-6 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-300 px-6 py-4 rounded-xl flex items-center gap-3 animate-fade-in shadow-lg shadow-green-500/10">
+            <Sparkles className="w-5 h-5" />
+            <span className="font-medium">Profile updated successfully!</span>
           </div>
         )}
 
-        {/* Profile Card */}
-        <div className="bg-slate-800/50 rounded-2xl p-8 mb-8">
-          {/* Avatar and Basic Info */}
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-8 mb-8">
-            <div className="flex-shrink-0 relative">
-              <img
-                src={formData.avatar || "/placeholder.svg?height=128&width=128&query=user"}
-                alt={formData.name}
-                className="w-32 h-32 rounded-full object-cover border-4 border-orange-600"
-              />
-              <button
-                onClick={handleAvatarClick}
-                disabled={uploadingAvatar}
-                className="absolute bottom-0 right-0 bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-full shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Cập nhật ảnh đại diện"
-              >
-                {uploadingAvatar ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Camera className="w-5 h-5" />
-                )}
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                onChange={handleAvatarChange}
-                className="hidden"
-              />
-            </div>
-            <div className="flex-1">
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="text-3xl font-bold bg-slate-700 text-white px-3 py-2 rounded-lg w-full mb-2"
-                />
-              ) : (
-                <h2 className="text-3xl font-bold mb-2">{formData.name}</h2>
-              )}
-              {isEditing ? (
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleInputChange}
-                  className="text-slate-300 bg-slate-700 text-white px-3 py-2 rounded-lg w-full"
-                  rows="2"
-                />
-              ) : (
-                <p className="text-slate-300 mb-4">{formData.bio}</p>
-              )}
-              <div className="flex flex-wrap gap-4 text-sm text-slate-400">
-                <div className="flex items-center">
-                  <Calendar className="w-4 h-4 mr-2 text-orange-400" />
-                  Joined {formData.joinDate}
+        {/* Profile Hero Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-600/20 via-orange-600/20 to-pink-600/20 border border-purple-500/20 mb-8">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDAgTCAyMCAwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMC4zIiBvcGFjaXR5PSIwLjEiLz48cGF0aCBkPSJNIDAgMCBMIDAgMjAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIwLjMiIG9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
+
+          <div className="relative z-10 p-8 md:p-12">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
+              {/* Avatar */}
+              <div className="relative group flex-shrink-0">
+                <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-orange-500/50 shadow-2xl shadow-orange-500/20">
+                  <img
+                    src={formData.avatar || "/placeholder.svg?height=128&width=128&query=user"}
+                    alt={formData.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <div className="flex items-center">
-                  <Users className="w-4 h-4 mr-2 text-orange-400" />
-                  {formData.followersCount} followers
-                </div>
-              </div>
-            </div>
-            <div>
-              {isEditing ? (
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSave}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center"
-                  >
-                    <Save className="w-4 h-4 mr-2" />
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition flex items-center"
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    Cancel
-                  </button>
-                </div>
-              ) : (
                 <button
-                  onClick={() => setIsEditing(true)}
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center"
+                  onClick={handleAvatarClick}
+                  disabled={uploadingAvatar}
+                  className="absolute bottom-0 right-0 bg-gradient-to-br from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white p-3 rounded-full shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110"
+                  title="Cập nhật ảnh đại diện"
                 >
-                  <Edit2 className="w-4 h-4 mr-2" />
-                  Edit Profile
+                  {uploadingAvatar ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Camera className="w-5 h-5" />
+                  )}
                 </button>
-              )}
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-slate-700 my-8"></div>
-
-          {/* User Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Email Section */}
-            <div>
-              <label className="flex items-center text-slate-400 text-sm font-medium mb-2">
-                <Mail className="w-4 h-4 mr-2 text-orange-400" />
-                Email Address
-              </label>
-              {isEditing ? (
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-700 text-white px-4 py-2 rounded-lg border border-slate-600 focus:border-orange-600 focus:outline-none transition"
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                  onChange={handleAvatarChange}
+                  className="hidden"
                 />
-              ) : (
-                <p className="text-white text-lg">{formData.email}</p>
-              )}
-            </div>
+              </div>
 
-            {/* Favorite Genre Section */}
-            <div>
-              <label className="flex items-center text-slate-400 text-sm font-medium mb-2">
-                <Music className="w-4 h-4 mr-2 text-orange-400" />
-                Favorite Genre
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="favoriteGenre"
-                  value={formData.favoriteGenre}
-                  onChange={handleInputChange}
-                  className="w-full bg-slate-700 text-white px-4 py-2 rounded-lg border border-slate-600 focus:border-orange-600 focus:outline-none transition"
-                />
-              ) : (
-                <p className="text-white text-lg">{formData.favoriteGenre}</p>
-              )}
-            </div>
+              {/* User Info */}
+              <div className="flex-1 w-full">
+                {isEditing ? (
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="text-3xl font-bold bg-slate-700/50 text-white px-4 py-3 rounded-xl w-full border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
+                      placeholder="Your name"
+                    />
+                    <textarea
+                      name="bio"
+                      value={formData.bio}
+                      onChange={handleInputChange}
+                      className="text-slate-300 bg-slate-700/50 text-white px-4 py-3 rounded-xl w-full border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition resize-none"
+                      rows="2"
+                      placeholder="Tell us about yourself..."
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <h2 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
+                      {formData.name}
+                    </h2>
+                    <p className="text-slate-300 mb-4 text-lg">{formData.bio || "No bio yet"}</p>
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      <div className="flex items-center gap-2 bg-slate-800/50 px-4 py-2 rounded-full">
+                        <Calendar className="w-4 h-4 text-orange-400" />
+                        <span className="text-slate-300">Joined {formData.joinDate}</span>
+                      </div>
+                      <div className="flex items-center gap-2 bg-slate-800/50 px-4 py-2 rounded-full">
+                        <Users className="w-4 h-4 text-orange-400" />
+                        <span className="text-slate-300">{formData.followersCount} followers</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
-            {/* Playlists Count */}
-            <div>
-              <label className="text-slate-400 text-sm font-medium mb-2 block">Total Playlists</label>
-              <p className="text-white text-lg">{formData.playlistCount}</p>
-            </div>
-
-            {/* Followers Count */}
-            <div>
-              <label className="text-slate-400 text-sm font-medium mb-2 block">Followers</label>
-              <p className="text-white text-lg">{formData.followersCount}</p>
+              {/* Edit/Save Buttons */}
+              <div className="flex-shrink-0">
+                {isEditing ? (
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={handleSave}
+                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-green-500/30"
+                    >
+                      <Save className="w-4 h-4" />
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-orange-500/30 hover:scale-105"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit Profile
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Account Settings Section */}
-        <div className="bg-slate-800/50 rounded-2xl p-8">
-          <h3 className="text-xl font-bold mb-6">Account Settings</h3>
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* User Information Card */}
+          <div className="bg-gradient-to-br from-slate-800/50 to-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <User className="w-5 h-5 text-orange-400" />
+              Personal Information
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="flex items-center text-slate-400 text-sm font-medium mb-2">
+                  <Mail className="w-4 h-4 mr-2 text-orange-400" />
+                  Email Address
+                </label>
+                {isEditing ? (
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-xl border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
+                  />
+                ) : (
+                  <p className="text-white text-lg bg-slate-700/30 px-4 py-3 rounded-xl">{formData.email}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="flex items-center text-slate-400 text-sm font-medium mb-2">
+                  <Music className="w-4 h-4 mr-2 text-orange-400" />
+                  Favorite Genre
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name="favoriteGenre"
+                    value={formData.favoriteGenre}
+                    onChange={handleInputChange}
+                    className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-xl border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
+                  />
+                ) : (
+                  <p className="text-white text-lg bg-slate-700/30 px-4 py-3 rounded-xl">{formData.favoriteGenre}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Card */}
+          <div className="bg-gradient-to-br from-slate-800/50 to-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-orange-400" />
+              Your Stats
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 p-4 rounded-xl border border-purple-500/20">
+                <p className="text-slate-400 text-sm mb-1">Total Playlists</p>
+                <p className="text-3xl font-bold text-white">{formData.playlistCount}</p>
+              </div>
+              <div className="bg-gradient-to-br from-orange-600/20 to-orange-600/10 p-4 rounded-xl border border-orange-500/20">
+                <p className="text-slate-400 text-sm mb-1">Followers</p>
+                <p className="text-3xl font-bold text-white">{formData.followersCount}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Account Settings Card */}
+        <div className="mt-8 bg-gradient-to-br from-slate-800/50 to-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <Lock className="w-5 h-5 text-orange-400" />
+            Account Settings
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link
               to="/my-playlists"
-              className="w-full text-left px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition text-slate-300 hover:text-white flex items-center"
+              className="group flex items-center gap-3 px-5 py-4 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition border border-slate-600/30 hover:border-orange-500/30"
             >
-              <Music className="w-4 h-4 mr-2" />
-              Manage My Playlists
+              <Music className="w-5 h-5 text-orange-400" />
+              <span className="text-slate-300 group-hover:text-white transition font-medium">Manage My Playlists</span>
             </Link>
+
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="w-full text-left px-4 py-3 bg-orange-600/20 hover:bg-orange-600/30 rounded-lg transition text-orange-300 hover:text-orange-200 flex items-center"
+              className="group flex items-center gap-3 px-5 py-4 bg-orange-600/10 hover:bg-orange-600/20 rounded-xl transition border border-orange-500/20 hover:border-orange-500/40"
             >
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Track
+              <Upload className="w-5 h-5 text-orange-400" />
+              <span className="text-orange-300 group-hover:text-orange-200 transition font-medium">Upload Track</span>
             </button>
+
             <button
               onClick={() => setIsChangePasswordModalOpen(true)}
-              className="w-full text-left px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition text-slate-300 hover:text-white flex items-center"
+              className="group flex items-center gap-3 px-5 py-4 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition border border-slate-600/30 hover:border-orange-500/30"
             >
-              <Lock className="w-4 h-4 mr-2" />
-              Change Password
+              <Lock className="w-5 h-5 text-orange-400" />
+              <span className="text-slate-300 group-hover:text-white transition font-medium">Change Password</span>
             </button>
-            <button className="w-full text-left px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition text-slate-300 hover:text-white">
-              Privacy Settings
+
+            <button
+              onClick={() => setIsDeleteAccountModalOpen(true)}
+              className="group flex items-center gap-3 px-5 py-4 bg-red-900/10 hover:bg-red-900/20 rounded-xl transition border border-red-500/20 hover:border-red-500/40"
+            >
+              <X className="w-5 h-5 text-red-400" />
+              <span className="text-red-400 group-hover:text-red-300 transition font-medium">Delete Account</span>
             </button>
-            <button className="w-full text-left px-4 py-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition text-slate-300 hover:text-white">
-              Notification Preferences
-            </button>
-            <button className="w-full text-left px-4 py-3 bg-red-900/20 hover:bg-red-900/30 rounded-lg transition text-red-400 hover:text-red-300">
-              Delete Account
-            </button>
+
             <button
               onClick={handleLogout}
-              className="w-full text-left px-4 py-3 bg-orange-900/20 hover:bg-orange-900/30 rounded-lg transition text-orange-400 hover:text-orange-300 flex items-center font-medium"
+              className="md:col-span-2 group flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-orange-600/20 to-red-600/20 hover:from-orange-600/30 hover:to-red-600/30 rounded-xl transition border border-orange-500/30 hover:border-orange-500/50"
             >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
+              <LogOut className="w-5 h-5 text-orange-400" />
+              <span className="text-orange-300 group-hover:text-orange-200 transition font-semibold">Logout</span>
             </button>
           </div>
         </div>
       </main>
       <Footer />
       <AudioPlayer />
+
       <UploadTrackModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
@@ -376,25 +433,29 @@ export default function Profile() {
 
       {/* Change Password Modal */}
       {isChangePasswordModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setIsChangePasswordModalOpen(false)}>
-          <div className="bg-slate-800 rounded-xl p-8 w-full max-w-md relative" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setIsChangePasswordModalOpen(false)}>
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 w-full max-w-md relative border border-slate-700 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => {
                 setIsChangePasswordModalOpen(false)
                 setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
               }}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
             >
               <X className="w-6 h-6" />
             </button>
-            <div className="text-center mb-6">
+
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-600/20 to-orange-600/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
+                <Lock className="w-8 h-8 text-orange-400" />
+              </div>
               <h2 className="text-2xl font-bold text-white">Change Password</h2>
-              <p className="text-slate-300 mt-2">Enter your current password and new password</p>
+              <p className="text-slate-300 mt-2">Enter your current and new password</p>
             </div>
-            
-            <form onSubmit={handleChangePassword} className="space-y-4">
+
+            <form onSubmit={handleChangePassword} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Current Password</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Current Password</label>
                 <div className="relative">
                   <input
                     type={showPasswords.current ? "text" : "password"}
@@ -402,26 +463,26 @@ export default function Profile() {
                     onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                     required
                     disabled={changingPassword}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     placeholder="Enter current password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
                     disabled={changingPassword}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center disabled:opacity-50"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
                   >
                     {showPasswords.current ? (
-                      <EyeOff className="text-slate-400 w-4 h-4" />
+                      <EyeOff className="text-slate-400 w-5 h-5" />
                     ) : (
-                      <Eye className="text-slate-400 w-4 h-4" />
+                      <Eye className="text-slate-400 w-5 h-5" />
                     )}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">New Password</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">New Password</label>
                 <div className="relative">
                   <input
                     type={showPasswords.new ? "text" : "password"}
@@ -430,26 +491,26 @@ export default function Profile() {
                     required
                     disabled={changingPassword}
                     minLength={8}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     placeholder="Enter new password (min 8 characters)"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
                     disabled={changingPassword}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center disabled:opacity-50"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
                   >
                     {showPasswords.new ? (
-                      <EyeOff className="text-slate-400 w-4 h-4" />
+                      <EyeOff className="text-slate-400 w-5 h-5" />
                     ) : (
-                      <Eye className="text-slate-400 w-4 h-4" />
+                      <Eye className="text-slate-400 w-5 h-5" />
                     )}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Confirm New Password</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Confirm New Password</label>
                 <div className="relative">
                   <input
                     type={showPasswords.confirm ? "text" : "password"}
@@ -458,19 +519,19 @@ export default function Profile() {
                     required
                     disabled={changingPassword}
                     minLength={8}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     placeholder="Confirm new password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
                     disabled={changingPassword}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center disabled:opacity-50"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
                   >
                     {showPasswords.confirm ? (
-                      <EyeOff className="text-slate-400 w-4 h-4" />
+                      <EyeOff className="text-slate-400 w-5 h-5" />
                     ) : (
-                      <Eye className="text-slate-400 w-4 h-4" />
+                      <Eye className="text-slate-400 w-5 h-5" />
                     )}
                   </button>
                 </div>
@@ -479,10 +540,99 @@ export default function Profile() {
               <button
                 type="submit"
                 disabled={changingPassword}
-                className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-600/50 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium transition"
+                className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 disabled:from-orange-600/50 disabled:to-orange-500/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition-all shadow-lg shadow-orange-500/30"
               >
                 {changingPassword ? 'Changing Password...' : 'Change Password'}
               </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Modal */}
+      {isDeleteAccountModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setIsDeleteAccountModalOpen(false)}>
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 w-full max-w-md relative border border-red-500/20 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => {
+                setIsDeleteAccountModalOpen(false)
+                setDeletePassword('')
+              }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
+                <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white">Delete Account</h2>
+              <p className="text-slate-300 mt-2">This action cannot be undone</p>
+            </div>
+
+            <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-5 mb-6">
+              <p className="text-red-300 text-sm font-semibold mb-3">
+                ⚠️ Warning: Deleting your account will permanently remove:
+              </p>
+              <ul className="text-red-300 text-sm space-y-1 ml-4 list-disc">
+                <li>Your profile and personal information</li>
+                <li>All uploaded tracks</li>
+                <li>All playlists you created</li>
+                <li>All your likes and comments</li>
+              </ul>
+            </div>
+
+            <form onSubmit={handleDeleteAccount} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Enter your password to confirm</label>
+                <div className="relative">
+                  <input
+                    type={showDeletePassword ? "text" : "password"}
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    required
+                    disabled={deletingAccount}
+                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDeletePassword(!showDeletePassword)}
+                    disabled={deletingAccount}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
+                  >
+                    {showDeletePassword ? (
+                      <EyeOff className="text-slate-400 w-5 h-5" />
+                    ) : (
+                      <Eye className="text-slate-400 w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsDeleteAccountModalOpen(false)
+                    setDeletePassword('')
+                  }}
+                  disabled={deletingAccount}
+                  className="flex-1 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-700/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={deletingAccount}
+                  className="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 disabled:from-red-600/50 disabled:to-red-500/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition-all shadow-lg shadow-red-500/30"
+                >
+                  {deletingAccount ? 'Deleting...' : 'Delete Account'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

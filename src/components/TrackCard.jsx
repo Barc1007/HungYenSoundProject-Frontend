@@ -26,7 +26,7 @@ export default function TrackCard({ track, onUpdate }) {
 
   const handleLike = async (e) => {
     e.stopPropagation()
-    
+
     if (!user) {
       showError("Vui lòng đăng nhập để thích bài hát")
       return
@@ -37,7 +37,7 @@ export default function TrackCard({ track, onUpdate }) {
       const result = await trackService.toggleLike(track.mongoId || track.id)
       setIsLiked(result.isLiked)
       setLikeCount(result.likeCount)
-      
+
       if (onUpdate) {
         onUpdate({ ...track, isLiked: result.isLiked, likeCount: result.likeCount })
       }
@@ -102,17 +102,15 @@ export default function TrackCard({ track, onUpdate }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 text-xs text-slate-400">
             <span>{track.duration || "0:00"}</span>
-            <span>{track.playCount || 0} plays</span>
           </div>
           <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={handleLike}
               disabled={isLiking || !user}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition ${
-                isLiked
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition ${isLiked
                   ? "bg-red-600/20 text-red-400 hover:bg-red-600/30"
                   : "bg-slate-700/50 text-slate-400 hover:bg-slate-700"
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
               {likeCount}

@@ -73,8 +73,8 @@ export default function AdminUploads() {
 
       const matchesSearch = searchTerm
         ? track.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (track.artist || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (track.genre || "").toLowerCase().includes(searchTerm.toLowerCase())
+        (track.artist || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (track.genre || "").toLowerCase().includes(searchTerm.toLowerCase())
         : true
 
       return matchesStatus && matchesSearch
@@ -123,14 +123,27 @@ export default function AdminUploads() {
   }
 
   const handleDeleteTrack = async (track) => {
-    if (!window.confirm(`Delete "${track.title}"? This will disable the track for all users.`)) return
+    // Different messages for hard delete (inactive) vs soft delete (active)
+    const confirmMessage = track.isActive
+      ? `Deactivate "${track.title}"? This will disable the track for all users.`
+      : `PERMANENTLY DELETE "${track.title}"? This will remove all data from the database and CANNOT be undone!`;
+
+    if (!window.confirm(confirmMessage)) return;
+
     try {
-      await trackService.deleteTrack(track.mongoId || track.id)
-      showSuccess("Track deleted successfully!")
-      fetchTracks()
+      await trackService.deleteTrack(track.mongoId || track.id);
+
+      // Show different success messages based on track state
+      if (track.isActive) {
+        showSuccess("Track deactivated successfully!");
+      } else {
+        showSuccess("Track permanently deleted from database!");
+      }
+
+      fetchTracks();
     } catch (err) {
-      console.error("Failed to delete track:", err)
-      showError(err.message || "Failed to delete track")
+      console.error("Failed to delete track:", err);
+      showError(err.message || "Failed to delete track");
     }
   }
 
@@ -190,11 +203,10 @@ export default function AdminUploads() {
         <div className="flex gap-2 mb-6 border-b border-slate-700">
           <button
             onClick={() => setActiveTab("pending")}
-            className={`px-6 py-3 font-medium transition ${
-              activeTab === "pending"
+            className={`px-6 py-3 font-medium transition ${activeTab === "pending"
                 ? "text-orange-400 border-b-2 border-orange-400"
                 : "text-slate-400 hover:text-slate-300"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
@@ -203,11 +215,10 @@ export default function AdminUploads() {
           </button>
           <button
             onClick={() => setActiveTab("approved")}
-            className={`px-6 py-3 font-medium transition ${
-              activeTab === "approved"
+            className={`px-6 py-3 font-medium transition ${activeTab === "approved"
                 ? "text-orange-400 border-b-2 border-orange-400"
                 : "text-slate-400 hover:text-slate-300"
-            }`}
+              }`}
           >
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4" />
@@ -223,11 +234,10 @@ export default function AdminUploads() {
                 <button
                   key={filter.id}
                   onClick={() => setFilterStatus(filter.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border ${
-                    filterStatus === filter.id
+                  className={`px-4 py-2 rounded-full text-sm font-medium border ${filterStatus === filter.id
                       ? "bg-orange-600 border-orange-500 text-white"
                       : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
-                  }`}
+                    }`}
                 >
                   {filter.label}
                 </button>
@@ -329,11 +339,10 @@ export default function AdminUploads() {
                           {activeTab === "approved" && (
                             <button
                               onClick={() => handleToggleStatus(track)}
-                              className={`px-3 py-1 rounded-full text-xs font-semibold transition ${
-                                track.isActive
+                              className={`px-3 py-1 rounded-full text-xs font-semibold transition ${track.isActive
                                   ? "bg-red-900/40 text-red-300 hover:bg-red-800/40"
                                   : "bg-green-900/40 text-green-300 hover:bg-green-800/40"
-                              }`}
+                                }`}
                             >
                               {track.isActive ? "Disable" : "Enable"}
                             </button>
