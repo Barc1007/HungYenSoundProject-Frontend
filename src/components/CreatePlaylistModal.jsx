@@ -103,11 +103,11 @@ export default function CreatePlaylistModal({ isOpen, onClose, onPlaylistCreated
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[60] p-4 pb-32 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-start justify-center z-[60] p-4 py-8 overflow-y-auto animate-fade-in"
       onClick={handleClose}
     >
       <div
-        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 w-full max-w-lg border border-slate-700 shadow-2xl transform transition-all animate-scale-in"
+        className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 sm:p-8 w-full max-w-lg border border-slate-700 shadow-2xl transform transition-all animate-scale-in my-auto max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
