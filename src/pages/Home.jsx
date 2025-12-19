@@ -74,9 +74,9 @@ export default function Home() {
           <section className="mb-12">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Latest Tracks</h2>
-              <a href="/genres" className="text-orange-400 hover:text-orange-300 transition flex items-center">
+              <Link to="/tracks" className="text-orange-400 hover:text-orange-300 transition flex items-center">
                 View All <ChevronRight className="ml-1 w-5 h-5" />
-              </a>
+              </Link>
             </div>
             {loadingTracks ? (
               <div className="flex items-center justify-center py-12">

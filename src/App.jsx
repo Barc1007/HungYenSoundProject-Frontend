@@ -14,6 +14,7 @@ import MyPlaylists from "./pages/MyPlaylists"
 import AdminUploads from "./pages/AdminUploads"
 import TrackDetail from "./pages/TrackDetail"
 import LikedSongs from "./pages/LikedSongs"
+import AllTracks from "./pages/AllTracks"
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
               <Router>
                 <Routes>
                   <Route path="/" element={<Home />} />
-
+                  <Route path="/tracks" element={<AllTracks />} />
                   <Route path="/playlists" element={<Playlists />} />
                   <Route path="/search" element={<Search />} />
                   <Route path="/signup" element={<SignUp />} />
