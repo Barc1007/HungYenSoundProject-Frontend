@@ -8,10 +8,10 @@ export const AudioProvider = ({ children }) => {
   const audioRef = useRef(new Audio())
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTrack, setCurrentTrack] = useState({
-    title: "Summer Vibes",
-    artist: "Chill Wave",
-    image: "http://static.photos/music/200x200/9",
-    audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    title: "",
+    artist: "",
+    image: null,
+    audio: null,
   })
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
