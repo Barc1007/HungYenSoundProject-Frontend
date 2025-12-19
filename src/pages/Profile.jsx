@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Sparkles, Heart } from "lucide-react"
+import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Heart, Shield, Trash2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
@@ -63,11 +63,6 @@ export default function Profile() {
     setIsEditing(false)
   }
 
-  const handleLogout = () => {
-    logout()
-    navigate("/")
-  }
-
   const handleAvatarClick = () => {
     fileInputRef.current?.click()
   }
@@ -76,16 +71,15 @@ export default function Profile() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      showError('Chỉ chấp nhận file ảnh (JPEG, PNG, GIF, WebP)')
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    if (!validTypes.includes(file.type)) {
+      showError('Please upload a valid image file (JPEG, PNG, GIF, or WebP)')
       return
     }
 
-    // Validate file size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      showError('Kích thước ảnh không được vượt quá 5MB')
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      showError('Image size must be less than 5MB')
       return
     }
 
@@ -93,41 +87,35 @@ export default function Profile() {
       setUploadingAvatar(true)
       const response = await authService.uploadAvatar(file)
 
-      if (response.success && response.data.user) {
-        updateUser(response.data.user)
-        showSuccess('Cập nhật ảnh đại diện thành công!')
+      if (response.success) {
+        const updatedUser = { ...user, avatar: response.data.avatarUrl }
+        updateUser(updatedUser)
+        setFormData(updatedUser)
+        showSuccess('Avatar updated successfully!')
       }
     } catch (error) {
-      console.error('Upload avatar error:', error)
-      showError(error.message || 'Không thể tải lên ảnh đại diện')
+      console.error('Avatar upload error:', error)
+      showError(error.message || 'Failed to upload avatar')
     } finally {
       setUploadingAvatar(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
     }
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
   }
 
   const handleChangePassword = async (e) => {
     e.preventDefault()
 
-    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-      showError('Vui lòng điền đầy đủ thông tin')
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      showError('Mật khẩu mới không khớp')
       return
     }
 
     if (passwordData.newPassword.length < 8) {
       showError('Mật khẩu mới phải có ít nhất 8 ký tự')
-      return
-    }
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showError('Mật khẩu mới và xác nhận mật khẩu không khớp')
-      return
-    }
-
-    if (passwordData.currentPassword === passwordData.newPassword) {
-      showError('Mật khẩu mới phải khác mật khẩu hiện tại')
       return
     }
 
@@ -208,10 +196,16 @@ export default function Profile() {
     ))
   }
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Recently'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  }
+
   return (
     <div className="min-h-screen flex flex-col pb-32">
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 py-8 flex-1 w-full">
+      <main className="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
         {/* Back Button */}
         <Link to="/" className="inline-flex items-center text-orange-400 hover:text-orange-300 transition mb-6 group">
           <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -220,23 +214,22 @@ export default function Profile() {
 
         {/* Success Message */}
         {saveSuccess && (
-          <div className="mb-6 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-300 px-6 py-4 rounded-xl flex items-center gap-3 animate-fade-in shadow-lg shadow-green-500/10">
-            <Sparkles className="w-5 h-5" />
+          <div className="mb-6 bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 text-green-300 px-6 py-4 rounded-xl flex items-center gap-3">
+            <Save className="w-5 h-5" />
             <span className="font-medium">Profile updated successfully!</span>
           </div>
         )}
 
-        {/* Profile Hero Card */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-600/20 via-orange-600/20 to-pink-600/20 border border-purple-500/20 mb-8">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDAgTCAyMCAwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMC4zIiBvcGFjaXR5PSIwLjEiLz48cGF0aCBkPSJNIDAgMCBMIDAgMjAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIwLjMiIG9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
-
-          <div className="relative z-10 p-8 md:p-12">
-            <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
-              {/* Avatar */}
-              <div className="relative group flex-shrink-0">
-                <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-orange-500/50 shadow-2xl shadow-orange-500/20">
+        {/* 2-Column Layout */}
+        <div className="grid lg:grid-cols-[320px_1fr] gap-8">
+          {/* LEFT SIDEBAR */}
+          <aside className="lg:sticky lg:top-8 lg:h-fit space-y-6">
+            {/* Avatar Card */}
+            <div className="bg-slate-900/60 border border-slate-700 rounded-2xl p-6">
+              <div className="relative group mx-auto w-40 h-40 mb-4">
+                <div className="w-full h-full rounded-full overflow-hidden ring-4 ring-orange-500/30 shadow-2xl">
                   <img
-                    src={formData.avatar || "/placeholder.svg?height=128&width=128&query=user"}
+                    src={formData.avatar || "/placeholder.svg?height=160&width=160&query=user"}
                     alt={formData.name}
                     className="w-full h-full object-cover"
                   />
@@ -244,8 +237,8 @@ export default function Profile() {
                 <button
                   onClick={handleAvatarClick}
                   disabled={uploadingAvatar}
-                  className="absolute bottom-0 right-0 bg-gradient-to-br from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white p-3 rounded-full shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110"
-                  title="Cập nhật ảnh đại diện"
+                  className="absolute bottom-2 right-2 bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-full shadow-xl transition disabled:opacity-50"
+                  title="Update avatar"
                 >
                   {uploadingAvatar ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -263,326 +256,282 @@ export default function Profile() {
               </div>
 
               {/* User Info */}
-              <div className="flex-1 w-full">
-                {isEditing ? (
-                  <div className="space-y-4">
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="text-3xl font-bold bg-slate-700/50 text-white px-4 py-3 rounded-xl w-full border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
-                      placeholder="Your name"
-                    />
-                    <textarea
-                      name="bio"
-                      value={formData.bio}
-                      onChange={handleInputChange}
-                      className="text-slate-300 bg-slate-700/50 text-white px-4 py-3 rounded-xl w-full border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition resize-none"
-                      rows="2"
-                      placeholder="Tell us about yourself..."
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <h2 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
-                      {formData.name}
-                    </h2>
-                    <p className="text-slate-300 mb-4 text-lg">{formData.bio || "No bio yet"}</p>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <div className="flex items-center gap-2 bg-slate-800/50 px-4 py-2 rounded-full">
-                        <Calendar className="w-4 h-4 text-orange-400" />
-                        <span className="text-slate-300">Joined {formData.joinDate}</span>
-                      </div>
-                    </div>
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-1">{formData.name}</h2>
+                <div className="flex items-center justify-center gap-2 text-sm text-slate-400 mb-3">
+                  <Mail className="w-4 h-4" />
+                  <span>{formData.email}</span>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-sm text-slate-400 mb-4">
+                  <Calendar className="w-4 h-4" />
+                  <span>Joined {formatDate(formData.createdAt)}</span>
+                </div>
+                {user?.role === 'admin' && (
+                  <div className="inline-flex items-center gap-2 bg-orange-600/20 text-orange-400 px-3 py-1 rounded-full text-sm font-medium">
+                    <Shield className="w-4 h-4" />
+                    Admin
                   </div>
                 )}
               </div>
+            </div>
 
-              {/* Edit/Save Buttons */}
-              <div className="flex-shrink-0">
-                {isEditing ? (
-                  <div className="flex flex-col gap-2">
+            {/* Quick Actions */}
+            <div className="bg-slate-900/60 border border-slate-700 rounded-2xl p-4 space-y-2">
+              <button
+                onClick={() => setIsUploadModalOpen(true)}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-orange-600/10 hover:bg-orange-600/20 rounded-xl transition text-left border border-orange-500/20"
+              >
+                <Upload className="w-5 h-5 text-orange-400" />
+                <span className="text-orange-300 font-medium">Upload Track</span>
+              </button>
+
+              <button
+                onClick={() => setIsChangePasswordModalOpen(true)}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition text-left"
+              >
+                <Lock className="w-5 h-5 text-slate-400" />
+                <span className="text-slate-300 font-medium">Change Password</span>
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-slate-700/30 hover:bg-red-900/20 rounded-xl transition text-left border border-transparent hover:border-red-500/30"
+              >
+                <LogOut className="w-5 h-5 text-slate-400" />
+                <span className="text-slate-300 font-medium">Logout</span>
+              </button>
+            </div>
+          </aside>
+
+          {/* RIGHT CONTENT */}
+          <div className="space-y-6">
+            {/* Profile Details Card */}
+            <div className="bg-slate-900/60 border border-slate-700 rounded-2xl p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold">Profile Information</h3>
+                {!isEditing ? (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg transition text-sm font-medium"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
                     <button
                       onClick={handleSave}
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-green-500/30"
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition text-sm font-medium"
                     >
                       <Save className="w-4 h-4" />
                       Save
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2"
+                      className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition text-sm font-medium"
                     >
                       <X className="w-4 h-4" />
                       Cancel
                     </button>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-orange-500/30 hover:scale-105"
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Name</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
+                      placeholder="Your name"
+                    />
+                  ) : (
+                    <p className="text-white text-lg">{formData.name}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-400 mb-2">Bio</label>
+                  {isEditing ? (
+                    <textarea
+                      name="bio"
+                      value={formData.bio || ''}
+                      onChange={handleInputChange}
+                      className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition resize-none"
+                      rows="3"
+                      placeholder="Tell us about yourself..."
+                    />
+                  ) : (
+                    <p className="text-slate-300">{formData.bio || "No bio yet"}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Liked Tracks Section */}
+            <div className="bg-slate-900/60 border border-slate-700 rounded-2xl p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                  <Heart className="w-6 h-6 text-red-400" />
+                  <h3 className="text-xl font-bold">Liked Tracks</h3>
+                </div>
+                <Link
+                  to="/liked-songs"
+                  className="text-orange-400 hover:text-orange-300 transition text-sm font-medium"
+                >
+                  View All →
+                </Link>
+              </div>
+
+              {loadingLikedTracks ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-slate-400">Loading liked tracks...</div>
+                </div>
+              ) : likedTracksError ? (
+                <div className="text-center py-12 text-slate-400">
+                  {likedTracksError}
+                </div>
+              ) : likedTracks.length === 0 ? (
+                <div className="text-center py-12">
+                  <Heart className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                  <p className="text-slate-400 mb-4">You haven't liked any tracks yet</p>
+                  <Link
+                    to="/tracks"
+                    className="inline-block text-orange-400 hover:text-orange-300 transition font-medium"
                   >
-                    <Edit2 className="w-4 h-4" />
-                    Edit Profile
-                  </button>
-                )}
-              </div>
+                    Discover tracks →
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {likedTracks.map((track) => (
+                    <TrackCard
+                      key={track.id || track.mongoId}
+                      track={track}
+                      onUpdate={handleLikedTrackUpdate}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* User Information Card */}
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <User className="w-5 h-5 text-orange-400" />
-              Personal Information
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="flex items-center text-slate-400 text-sm font-medium mb-2">
-                  <Mail className="w-4 h-4 mr-2 text-orange-400" />
-                  Email Address
-                </label>
-                {isEditing ? (
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-xl border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
-                  />
-                ) : (
-                  <p className="text-white text-lg bg-slate-700/30 px-4 py-3 rounded-xl">{formData.email}</p>
-                )}
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-
-        {/* Account Settings Card */}
-        <div className="mt-8 bg-gradient-to-br from-slate-800/50 to-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Lock className="w-5 h-5 text-orange-400" />
-            Account Settings
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link
-              to="/my-playlists"
-              className="group flex items-center gap-3 px-5 py-4 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition border border-slate-600/30 hover:border-orange-500/30"
-            >
-              <Music className="w-5 h-5 text-orange-400" />
-              <span className="text-slate-300 group-hover:text-white transition font-medium">Manage My Playlists</span>
-            </Link>
-
-            <button
-              onClick={() => setIsUploadModalOpen(true)}
-              className="group flex items-center gap-3 px-5 py-4 bg-orange-600/10 hover:bg-orange-600/20 rounded-xl transition border border-orange-500/20 hover:border-orange-500/40"
-            >
-              <Upload className="w-5 h-5 text-orange-400" />
-              <span className="text-orange-300 group-hover:text-orange-200 transition font-medium">Upload Track</span>
-            </button>
-
-            <button
-              onClick={() => setIsChangePasswordModalOpen(true)}
-              className="group flex items-center gap-3 px-5 py-4 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition border border-slate-600/30 hover:border-orange-500/30"
-            >
-              <Lock className="w-5 h-5 text-orange-400" />
-              <span className="text-slate-300 group-hover:text-white transition font-medium">Change Password</span>
-            </button>
-
-            <button
-              onClick={() => setIsDeleteAccountModalOpen(true)}
-              className="group flex items-center gap-3 px-5 py-4 bg-red-900/10 hover:bg-red-900/20 rounded-xl transition border border-red-500/20 hover:border-red-500/40"
-            >
-              <X className="w-5 h-5 text-red-400" />
-              <span className="text-red-400 group-hover:text-red-300 transition font-medium">Delete Account</span>
-            </button>
-
-            <button
-              onClick={handleLogout}
-              className="md:col-span-2 group flex items-center justify-center gap-3 px-5 py-4 bg-gradient-to-r from-orange-600/20 to-red-600/20 hover:from-orange-600/30 hover:to-red-600/30 rounded-xl transition border border-orange-500/30 hover:border-orange-500/50"
-            >
-              <LogOut className="w-5 h-5 text-orange-400" />
-              <span className="text-orange-300 group-hover:text-orange-200 transition font-semibold">Logout</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Liked Tracks Section */}
-        <div className="bg-slate-900/40 border border-slate-700 rounded-3xl p-6 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-3">
-              <Heart className="w-6 h-6 text-red-400" />
-              <h2 className="text-2xl font-bold">Liked Tracks</h2>
-            </div>
-            <Link
-              to="/liked-songs"
-              className="text-orange-400 hover:text-orange-300 transition text-sm font-medium"
-            >
-              View All →
-            </Link>
-          </div>
-
-          {loadingLikedTracks ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-slate-400">Loading liked tracks...</div>
-            </div>
-          ) : likedTracksError ? (
-            <div className="text-center py-12 text-slate-400">
-              {likedTracksError}
-            </div>
-          ) : likedTracks.length === 0 ? (
-            <div className="text-center py-12">
-              <Heart className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-              <p className="text-slate-400">You haven't liked any tracks yet</p>
-              <Link
-                to="/tracks"
-                className="inline-block mt-4 text-orange-400 hover:text-orange-300 transition"
+            {/* Danger Zone */}
+            <div className="bg-red-900/10 border border-red-500/30 rounded-2xl p-6">
+              <h3 className="text-xl font-bold text-red-400 mb-4">Danger Zone</h3>
+              <p className="text-slate-400 text-sm mb-4">
+                Once you delete your account, there is no going back. Please be certain.
+              </p>
+              <button
+                onClick={() => setIsDeleteAccountModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/50 rounded-lg transition text-red-400 font-medium"
               >
-                Discover tracks →
-              </Link>
+                <Trash2 className="w-4 h-4" />
+                Delete Account
+              </button>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {likedTracks.map((track) => (
-                <TrackCard
-                  key={track.id || track.mongoId}
-                  track={track}
-                  onUpdate={handleLikedTrackUpdate}
-                />
-              ))}
-            </div>
-          )}
+          </div>
         </div>
       </main>
+
       <Footer />
       <AudioPlayer />
 
+      {/* Upload Modal */}
       <UploadTrackModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUploaded={() => {
           setIsUploadModalOpen(false)
+          showSuccess('Track uploaded successfully!')
         }}
       />
 
       {/* Change Password Modal */}
       {isChangePasswordModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setIsChangePasswordModalOpen(false)}>
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 w-full max-w-md relative border border-slate-700 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => {
-                setIsChangePasswordModalOpen(false)
-                setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
-              }}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-600/20 to-orange-600/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
-                <Lock className="w-8 h-8 text-orange-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-white">Change Password</h2>
-              <p className="text-slate-300 mt-2">Enter your current and new password</p>
-            </div>
-
-            <form onSubmit={handleChangePassword} className="space-y-5">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full">
+            <h3 className="text-2xl font-bold mb-6">Change Password</h3>
+            <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Current Password</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">Current Password</label>
                 <div className="relative">
                   <input
                     type={showPasswords.current ? "text" : "password"}
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 pr-12 text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                     required
-                    disabled={changingPassword}
-                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                    placeholder="Enter current password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
-                    disabled={changingPassword}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                   >
-                    {showPasswords.current ? (
-                      <EyeOff className="text-slate-400 w-5 h-5" />
-                    ) : (
-                      <Eye className="text-slate-400 w-5 h-5" />
-                    )}
+                    {showPasswords.current ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">New Password</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">New Password</label>
                 <div className="relative">
                   <input
                     type={showPasswords.new ? "text" : "password"}
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 pr-12 text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                     required
-                    disabled={changingPassword}
-                    minLength={8}
-                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                    placeholder="Enter new password (min 8 characters)"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-                    disabled={changingPassword}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                   >
-                    {showPasswords.new ? (
-                      <EyeOff className="text-slate-400 w-5 h-5" />
-                    ) : (
-                      <Eye className="text-slate-400 w-5 h-5" />
-                    )}
+                    {showPasswords.new ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Confirm New Password</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">Confirm New Password</label>
                 <div className="relative">
                   <input
                     type={showPasswords.confirm ? "text" : "password"}
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 pr-12 text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
                     required
-                    disabled={changingPassword}
-                    minLength={8}
-                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                    placeholder="Confirm new password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-                    disabled={changingPassword}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                   >
-                    {showPasswords.confirm ? (
-                      <EyeOff className="text-slate-400 w-5 h-5" />
-                    ) : (
-                      <Eye className="text-slate-400 w-5 h-5" />
-                    )}
+                    {showPasswords.confirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={changingPassword}
-                className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 disabled:from-orange-600/50 disabled:to-orange-500/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition-all shadow-lg shadow-orange-500/30"
-              >
-                {changingPassword ? 'Changing Password...' : 'Change Password'}
-              </button>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="submit"
+                  disabled={changingPassword}
+                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-medium transition disabled:opacity-50"
+                >
+                  {changingPassword ? 'Changing...' : 'Change Password'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsChangePasswordModalOpen(false)}
+                  className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition"
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -590,86 +539,47 @@ export default function Profile() {
 
       {/* Delete Account Modal */}
       {isDeleteAccountModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setIsDeleteAccountModalOpen(false)}>
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 w-full max-w-md relative border border-red-500/20 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => {
-                setIsDeleteAccountModalOpen(false)
-                setDeletePassword('')
-              }}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
-                <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-white">Delete Account</h2>
-              <p className="text-slate-300 mt-2">This action cannot be undone</p>
-            </div>
-
-            <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-5 mb-6">
-              <p className="text-red-300 text-sm font-semibold mb-3">
-                ⚠️ Warning: Deleting your account will permanently remove:
-              </p>
-              <ul className="text-red-300 text-sm space-y-1 ml-4 list-disc">
-                <li>Your profile and personal information</li>
-                <li>All uploaded tracks</li>
-                <li>All playlists you created</li>
-                <li>All your likes and comments</li>
-              </ul>
-            </div>
-
-            <form onSubmit={handleDeleteAccount} className="space-y-5">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-900 border border-red-500/50 rounded-2xl p-6 max-w-md w-full">
+            <h3 className="text-2xl font-bold text-red-400 mb-4">Delete Account</h3>
+            <p className="text-slate-300 mb-6">
+              This action cannot be undone. All your data will be permanently deleted.
+            </p>
+            <form onSubmit={handleDeleteAccount} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Enter your password to confirm</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">Enter your password to confirm</label>
                 <div className="relative">
                   <input
                     type={showDeletePassword ? "text" : "password"}
                     value={deletePassword}
                     onChange={(e) => setDeletePassword(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 pr-12 text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
                     required
-                    disabled={deletingAccount}
-                    className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-red-500 focus:border-transparent pr-12 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                    placeholder="Enter your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowDeletePassword(!showDeletePassword)}
-                    disabled={deletingAccount}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center disabled:opacity-50"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                   >
-                    {showDeletePassword ? (
-                      <EyeOff className="text-slate-400 w-5 h-5" />
-                    ) : (
-                      <Eye className="text-slate-400 w-5 h-5" />
-                    )}
+                    {showDeletePassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsDeleteAccountModalOpen(false)
-                    setDeletePassword('')
-                  }}
-                  disabled={deletingAccount}
-                  className="flex-1 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-700/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition"
-                >
-                  Cancel
-                </button>
+              <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
                   disabled={deletingAccount}
-                  className="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 disabled:from-red-600/50 disabled:to-red-500/50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition-all shadow-lg shadow-red-500/30"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition disabled:opacity-50"
                 >
-                  {deletingAccount ? 'Deleting...' : 'Delete Account'}
+                  {deletingAccount ? 'Deleting...' : 'Delete My Account'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteAccountModalOpen(false)}
+                  className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition"
+                >
+                  Cancel
                 </button>
               </div>
             </form>
