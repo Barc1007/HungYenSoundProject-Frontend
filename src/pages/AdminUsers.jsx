@@ -270,7 +270,7 @@ export default function AdminUsers() {
                             <LoadingSpinner />
                             <span className="ml-3 text-slate-400">Loading users...</span>
                         </div>
-                    ) : users.length === 0 ? (
+                    ) : !users || users.length === 0 ? (
                         <div className="text-center py-20 text-slate-400">
                             No users found
                         </div>
