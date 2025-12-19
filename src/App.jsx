@@ -16,6 +16,8 @@ import AdminUsers from "./pages/AdminUsers"
 import AdminUsersTest from "./pages/AdminUsersTest"
 import TrackDetail from "./pages/TrackDetail"
 import LikedSongs from "./pages/LikedSongs"
+import Liked from "./pages/Liked"
+import History from "./pages/History"
 import AllTracks from "./pages/AllTracks"
 
 function App() {
@@ -38,6 +40,22 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <LikedSongs />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/liked"
+                    element={
+                      <ProtectedRoute>
+                        <Liked />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/history"
+                    element={
+                      <ProtectedRoute>
+                        <History />
                       </ProtectedRoute>
                     }
                   />
