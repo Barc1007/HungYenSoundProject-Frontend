@@ -208,7 +208,7 @@ export default function AudioPlayer() {
           </div>
 
           {/* Right Section - Volume & Queue */}
-          <div className="flex items-center gap-4 w-[280px] justify-end">
+          <div className="flex items-center gap-6 w-[200px] justify-end">
             {/* Queue Button with Dropdown */}
             <div className="relative">
               <button
