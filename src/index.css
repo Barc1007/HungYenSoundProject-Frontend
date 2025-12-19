@@ -98,17 +98,12 @@ input[type="range"]::-moz-range-thumb {
 
 /* Global Button Improvements */
 button {
-  border-radius: 12px;
+  border-radius: 10px;
   transition: all 0.2s ease;
 }
 
 button:active {
   transform: scale(0.97);
-}
-
-/* Icon buttons - make them rounded */
-button:has(svg:only-child) {
-  border-radius: 50%;
 }
 
 /* Small action buttons */
