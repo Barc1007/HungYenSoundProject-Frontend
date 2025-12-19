@@ -105,7 +105,14 @@ export const trackService = {
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || "Failed to fetch tracks");
       }
-      return response.data.data.tracks;
+      // Return full response for pagination support
+      return {
+        tracks: response.data.data.tracks,
+        total: response.data.total,
+        totalPages: response.data.totalPages,
+        page: response.data.page,
+        count: response.data.count
+      };
     } catch (error) {
       console.error("Get tracks error:", error);
       throw error.response?.data || { message: "Failed to fetch tracks" };

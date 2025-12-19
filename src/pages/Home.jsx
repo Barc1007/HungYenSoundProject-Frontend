@@ -21,13 +21,13 @@ export default function Home() {
       try {
         setLoadingTracks(true)
         // Get latest approved tracks (works for all users)
-        const data = await trackService.getTracks({
+        const response = await trackService.getTracks({
           source: "local",
           limit: 6,
           sortBy: "createdAt",
           sortOrder: "desc"
         })
-        setTracks(data)
+        setTracks(response.tracks)
       } catch (err) {
         console.error("Failed to load tracks:", err)
       } finally {
