@@ -59,17 +59,9 @@ export default function Navbar() {
                 Playlists
               </Link>
               {user && (
-                <>
-                  <Link to="/my-playlists" className="text-orange-200 hover:text-white transition">
-                    My Playlists
-                  </Link>
-                  <Link to="/liked" className="text-orange-200 hover:text-white transition">
-                    Liked
-                  </Link>
-                  <Link to="/history" className="text-orange-200 hover:text-white transition">
-                    History
-                  </Link>
-                </>
+                <Link to="/my-playlists" className="text-orange-200 hover:text-white transition">
+                  My Playlists
+                </Link>
               )}
               {user?.role === "admin" && (
                 <>
