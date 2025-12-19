@@ -14,6 +14,7 @@ export default function Home() {
   const { playTrack } = useAudio()
   const [tracks, setTracks] = useState([])
   const [loadingTracks, setLoadingTracks] = useState(true)
+  const [playingRandom, setPlayingRandom] = useState(false)
 
   useEffect(() => {
     const loadTracks = async () => {
@@ -35,10 +36,25 @@ export default function Home() {
     loadTracks()
   }, [])
 
-  const handlePlayRandom = () => {
-    if (tracks.length > 0) {
-      const randomTrack = tracks[Math.floor(Math.random() * tracks.length)]
-      playTrack(randomTrack)
+  const handlePlayRandom = async () => {
+    try {
+      setPlayingRandom(true)
+      // Fetch all tracks for random play
+      const response = await trackService.getTracks({
+        source: "local",
+        limit: 1000, // Get all tracks
+        sortBy: "createdAt",
+        sortOrder: "desc"
+      })
+      const allTracks = response.tracks || []
+      if (allTracks.length > 0) {
+        const randomTrack = allTracks[Math.floor(Math.random() * allTracks.length)]
+        playTrack(randomTrack, allTracks, allTracks.indexOf(randomTrack))
+      }
+    } catch (err) {
+      console.error("Failed to play random track:", err)
+    } finally {
+      setPlayingRandom(false)
     }
   }
 
@@ -59,11 +75,11 @@ export default function Home() {
                     <p className="text-slate-300 mb-5">Share and enjoy your favourite songs.</p>
                     <button
                       onClick={handlePlayRandom}
-                      disabled={tracks.length === 0}
+                      disabled={loadingTracks || playingRandom}
                       className="bg-orange-600 hover:bg-orange-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-3 rounded-full font-medium transition flex items-center gap-2 shadow-lg shadow-orange-500/20"
                     >
                       <Play className="w-5 h-5" fill="white" />
-                      Play Now
+                      {playingRandom ? "Loading..." : "Play Now"}
                     </button>
                   </div>
                   <div className="hidden md:block">
