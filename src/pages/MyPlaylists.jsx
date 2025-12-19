@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Trash2, Music, Play, ListMusic, Clock, Sparkles } from "lucide-react"
+import { Plus, Trash2, Music, Play, ListMusic, Clock, Globe, Lock } from "lucide-react"
 import Navbar from "../components/Navbar"
-
 import AudioPlayer from "../components/AudioPlayer"
 import CreatePlaylistModal from "../components/CreatePlaylistModal"
 import AddSongsModal from "../components/AddSongsModal"
@@ -14,7 +13,7 @@ export default function MyPlaylists() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isAddSongsModalOpen, setIsAddSongsModalOpen] = useState(false)
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null)
-  const { playlists, deletePlaylist, removeSongFromPlaylist } = usePlaylist()
+  const { playlists, deletePlaylist, removeSongFromPlaylist, updatePlaylist } = usePlaylist()
   const { playTrack } = useAudio()
 
   const handleAddSongs = (playlistId) => {
@@ -32,20 +31,26 @@ export default function MyPlaylists() {
     }
   }
 
+  const handleTogglePublic = async (playlist) => {
+    try {
+      const playlistId = playlist._id || playlist.id
+      await updatePlaylist(playlistId, { isPublic: !playlist.isPublic })
+    } catch (err) {
+      console.error('Error toggling public status:', err)
+    }
+  }
+
   const playPlaylist = (playlist) => {
     if (!playlist.songs || playlist.songs.length === 0) {
       alert("This playlist is empty. Add some songs first!")
       return
     }
-
-    // Play the first track and set the entire playlist as the queue
     playTrack(playlist.songs[0], playlist.songs, 0)
   }
 
   const getTotalDuration = (songs) => {
     if (!songs || songs.length === 0) return "0:00"
-    // This is a simplified calculation - you might need to parse actual durations
-    const minutes = songs.length * 3 // Assuming avg 3 min per song
+    const minutes = songs.length * 3
     const hours = Math.floor(minutes / 60)
     const mins = minutes % 60
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`
@@ -108,13 +113,37 @@ export default function MyPlaylists() {
                   className="group bg-gradient-to-br from-slate-800/50 to-slate-800/30 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 border border-slate-700/50 hover:border-purple-500/30"
                 >
                   {/* Header Image */}
-                  <div className="relative overflow-hidden h-56">
+                  <div className="relative overflow-hidden h-48">
                     <img
                       src={playlist.image || "/placeholder.svg"}
                       alt={playlist.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                    {/* Public/Private Badge */}
+                    <div className="absolute top-3 left-3">
+                      <button
+                        onClick={() => handleTogglePublic(playlist)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${playlist.isPublic
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
+                            : 'bg-slate-700/50 text-slate-400 border border-slate-600/50 hover:bg-slate-700'
+                          }`}
+                        title={playlist.isPublic ? "Click to make private" : "Click to make public"}
+                      >
+                        {playlist.isPublic ? (
+                          <>
+                            <Globe className="w-3.5 h-3.5" />
+                            Public
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="w-3.5 h-3.5" />
+                            Private
+                          </>
+                        )}
+                      </button>
+                    </div>
 
                     {/* Play Button */}
                     {playlist.songs.length > 0 && (
@@ -149,7 +178,7 @@ export default function MyPlaylists() {
 
                     {/* Track List Preview */}
                     {playlist.songs.length > 0 ? (
-                      <div className="space-y-2 mb-4 max-h-32 overflow-y-auto custom-scrollbar">
+                      <div className="space-y-2 mb-4 max-h-28 overflow-y-auto custom-scrollbar">
                         {playlist.songs.slice(0, 3).map((song, idx) => (
                           <div
                             key={song.id || idx}
@@ -218,7 +247,7 @@ export default function MyPlaylists() {
           </div>
         )}
       </main>
-      
+
       <AudioPlayer />
 
       <CreatePlaylistModal

@@ -1,40 +1,32 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "react-router-dom"
-import { Filter, ArrowDown, X, Play, Music, Clock, TrendingUp, Sparkles } from "lucide-react"
+import { Play, Music, Clock, TrendingUp, Sparkles } from "lucide-react"
 import Navbar from "../components/Navbar"
-
 import AudioPlayer from "../components/AudioPlayer"
-import { usePlaylist } from "../context/PlaylistContext"
+import LoadingSpinner from "../components/LoadingSpinner"
 import { useAudio } from "../context/AudioContext"
+import playlistService from "../services/playlistService"
 
 export default function Playlists() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const genre = searchParams.get("genre")
-  const { playlists } = usePlaylist()
   const { playTrack } = useAudio()
+  const [playlists, setPlaylists] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const [filterOpen, setFilterOpen] = useState(false)
-  const [sortBy, setSortBy] = useState("recent") // recent, popular, name
-
-  // Filter public/featured playlists (if you have that property)
-  const featuredPlaylists = playlists.filter(p => p.isPublic || p.featured)
-
-  const filteredPlaylists = genre
-    ? featuredPlaylists.filter(p => p.genre?.toLowerCase() === genre.toLowerCase())
-    : featuredPlaylists
-
-  const sortedPlaylists = [...filteredPlaylists].sort((a, b) => {
-    switch (sortBy) {
-      case "popular":
-        return (b.playCount || 0) - (a.playCount || 0)
-      case "name":
-        return (a.name || "").localeCompare(b.name || "")
-      default: // recent
-        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+  useEffect(() => {
+    const loadPublicPlaylists = async () => {
+      try {
+        setLoading(true)
+        const data = await playlistService.getPublicPlaylists()
+        setPlaylists(data)
+      } catch (err) {
+        console.error("Failed to load public playlists:", err)
+      } finally {
+        setLoading(false)
+      }
     }
-  })
+    loadPublicPlaylists()
+  }, [])
 
   const playPlaylist = (playlist) => {
     if (!playlist.songs || playlist.songs.length === 0) {
@@ -42,8 +34,6 @@ export default function Playlists() {
     }
     playTrack(playlist.songs[0], playlist.songs, 0)
   }
-
-  const genres = ["Pop", "Rock", "Hip Hop", "Jazz", "Electronic", "Classical"]
 
   return (
     <div className="min-h-screen flex flex-col pb-32">
@@ -56,11 +46,11 @@ export default function Playlists() {
             <div className="flex items-center gap-3 mb-4">
               <Sparkles className="w-8 h-8 text-orange-400" />
               <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
-                Featured Playlists
+                Public Playlists
               </h1>
             </div>
             <p className="text-slate-300 text-lg max-w-2xl">
-              Discover curated collections of the best tracks, handpicked just for you
+              Discover curated collections shared by the community
             </p>
           </div>
         </div>
@@ -68,14 +58,19 @@ export default function Playlists() {
         {/* Info Bar */}
         <div className="flex items-center mb-8">
           <span className="text-slate-400 text-sm">
-            {sortedPlaylists.length} playlists
+            {playlists.length} playlists
           </span>
         </div>
 
         {/* Playlists Grid */}
-        {sortedPlaylists.length > 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <LoadingSpinner />
+            <span className="ml-3 text-slate-400">Loading playlists...</span>
+          </div>
+        ) : playlists.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedPlaylists.map((playlist) => {
+            {playlists.map((playlist) => {
               const playlistId = playlist._id || playlist.id
               return (
                 <div
@@ -110,6 +105,13 @@ export default function Playlists() {
                         <span>{playlist.songs?.length || 0} tracks</span>
                       </div>
                     </div>
+
+                    {/* Creator Badge */}
+                    {playlist.userId?.name && (
+                      <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
+                        <span className="text-xs text-slate-300">by {playlist.userId.name}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Details */}
@@ -122,24 +124,17 @@ export default function Playlists() {
 
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-4 text-slate-500">
-                        {playlist.duration && (
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>{playlist.duration}</span>
-                          </div>
-                        )}
                         {playlist.playCount && (
                           <div className="flex items-center gap-1">
                             <TrendingUp className="w-3.5 h-3.5" />
-                            <span>{playlist.playCount}</span>
+                            <span>{playlist.playCount} plays</span>
                           </div>
                         )}
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{playlist.songs?.length || 0} songs</span>
+                        </div>
                       </div>
-                      {playlist.genre && (
-                        <span className="bg-slate-700/50 px-3 py-1 rounded-full text-slate-400">
-                          {playlist.genre}
-                        </span>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -151,21 +146,10 @@ export default function Playlists() {
             <div className="w-20 h-20 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-6">
               <Music className="w-10 h-10 text-slate-600" />
             </div>
-            <p className="text-slate-300 text-xl mb-2 font-semibold">No playlists found</p>
-            <p className="text-slate-400 text-sm mb-6">
-              {genre
-                ? `No playlists available for ${genre}. Try a different genre.`
-                : "Check back later or create your own playlist!"
-              }
+            <p className="text-slate-300 text-xl mb-2 font-semibold">No public playlists yet</p>
+            <p className="text-slate-400 text-sm">
+              Create a playlist and make it public to share with others!
             </p>
-            {genre && (
-              <button
-                onClick={() => setSearchParams({})}
-                className="bg-orange-600 hover:bg-orange-500 text-white px-6 py-3 rounded-full font-medium transition shadow-lg shadow-orange-500/30"
-              >
-                Clear Filter
-              </button>
-            )}
           </div>
         )}
       </main>

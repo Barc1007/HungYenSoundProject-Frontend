@@ -47,11 +47,11 @@ export const playlistService = {
     try {
       const params = userId ? { userId } : {};
       const response = await api.get('/playlists', { params });
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return response.data.data.playlists || [];
     } catch (error) {
       console.error('Error fetching playlists:', error);
@@ -59,15 +59,31 @@ export const playlistService = {
     }
   },
 
+  // Get all PUBLIC playlists (no auth required)
+  async getPublicPlaylists() {
+    try {
+      const response = await api.get('/playlists/public');
+
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || 'Invalid response from server');
+      }
+
+      return response.data.data.playlists || [];
+    } catch (error) {
+      console.error('Error fetching public playlists:', error);
+      return []; // Return empty array on error
+    }
+  },
+
   // Get single playlist by ID
   async getPlaylist(playlistId) {
     try {
       const response = await api.get(`/playlists/${playlistId}`);
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return response.data.data.playlist;
     } catch (error) {
       console.error('Error fetching playlist:', error);
@@ -79,11 +95,11 @@ export const playlistService = {
   async createPlaylist(playlistData) {
     try {
       const response = await api.post('/playlists', playlistData);
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return response.data.data.playlist;
     } catch (error) {
       console.error('Error creating playlist:', error);
@@ -95,11 +111,11 @@ export const playlistService = {
   async updatePlaylist(playlistId, updates) {
     try {
       const response = await api.put(`/playlists/${playlistId}`, updates);
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return response.data.data.playlist;
     } catch (error) {
       console.error('Error updating playlist:', error);
@@ -111,11 +127,11 @@ export const playlistService = {
   async deletePlaylist(playlistId) {
     try {
       const response = await api.delete(`/playlists/${playlistId}`);
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return true;
     } catch (error) {
       console.error('Error deleting playlist:', error);
@@ -127,11 +143,11 @@ export const playlistService = {
   async addSongToPlaylist(playlistId, song) {
     try {
       const response = await api.post(`/playlists/${playlistId}/songs`, song);
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return response.data.data.playlist;
     } catch (error) {
       console.error('Error adding song to playlist:', error);
@@ -143,11 +159,11 @@ export const playlistService = {
   async removeSongFromPlaylist(playlistId, songId) {
     try {
       const response = await api.delete(`/playlists/${playlistId}/songs/${songId}`);
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return response.data.data.playlist;
     } catch (error) {
       console.error('Error removing song from playlist:', error);
@@ -160,17 +176,17 @@ export const playlistService = {
     try {
       const formData = new FormData();
       formData.append('image', imageFile);
-      
+
       const response = await api.post(`/uploads/playlist/${playlistId}/image`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      
+
       if (!response.data || !response.data.success) {
         throw new Error(response.data?.message || 'Invalid response from server');
       }
-      
+
       return response.data.data.playlist;
     } catch (error) {
       console.error('Error uploading playlist image:', error);
