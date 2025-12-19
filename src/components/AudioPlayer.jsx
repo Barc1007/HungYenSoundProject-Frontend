@@ -41,6 +41,11 @@ export default function AudioPlayer() {
     toggleLike()
   }
 
+  // Don't show player if no track is loaded
+  if (!currentTrack.audio && !currentTrack.title) {
+    return null
+  }
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-900/98 to-slate-900/95 backdrop-blur-xl border-t border-slate-700/50 shadow-2xl z-50">
       {/* Progress Bar - Full Width at Top */}
@@ -97,8 +102,8 @@ export default function AudioPlayer() {
             <button
               onClick={handleLikeClick}
               className={`flex-shrink-0 transition-all duration-200 ${isTrackLiked()
-                  ? 'text-orange-400 scale-110'
-                  : 'text-slate-400 hover:text-orange-400 hover:scale-110'
+                ? 'text-orange-400 scale-110'
+                : 'text-slate-400 hover:text-orange-400 hover:scale-110'
                 }`}
               title={isTrackLiked() ? "Unlike" : "Like"}
             >
@@ -113,8 +118,8 @@ export default function AudioPlayer() {
               <button
                 onClick={toggleShuffle}
                 className={`transition-all duration-200 ${isShuffle
-                    ? 'text-orange-400 scale-110'
-                    : 'text-slate-400 hover:text-white hover:scale-105'
+                  ? 'text-orange-400 scale-110'
+                  : 'text-slate-400 hover:text-white hover:scale-105'
                   }`}
                 title={isShuffle ? "Shuffle On" : "Shuffle Off"}
               >
@@ -151,8 +156,8 @@ export default function AudioPlayer() {
               <button
                 onClick={toggleRepeat}
                 className={`transition-all duration-200 relative ${repeatMode > 0
-                    ? 'text-orange-400 scale-110'
-                    : 'text-slate-400 hover:text-white hover:scale-105'
+                  ? 'text-orange-400 scale-110'
+                  : 'text-slate-400 hover:text-white hover:scale-105'
                   }`}
                 title={
                   repeatMode === 0
@@ -213,8 +218,8 @@ export default function AudioPlayer() {
             <button
               onClick={toggleQueue}
               className={`transition-all duration-200 ${showQueue
-                  ? 'text-orange-400 scale-110'
-                  : 'text-slate-400 hover:text-white hover:scale-110'
+                ? 'text-orange-400 scale-110'
+                : 'text-slate-400 hover:text-white hover:scale-110'
                 }`}
               title="Queue"
             >
@@ -265,8 +270,8 @@ export default function AudioPlayer() {
             <button
               onClick={toggleFullscreen}
               className={`transition-all duration-200 ${isFullscreen
-                  ? 'text-orange-400 scale-110'
-                  : 'text-slate-400 hover:text-white hover:scale-110'
+                ? 'text-orange-400 scale-110'
+                : 'text-slate-400 hover:text-white hover:scale-110'
                 }`}
               title="Fullscreen Player"
             >
