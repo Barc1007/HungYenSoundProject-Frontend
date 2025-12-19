@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { X, Upload, Image as ImageIcon } from "lucide-react"
 import trackService from "../services/trackService"
@@ -109,9 +107,10 @@ export default function UpdateTrackImageModal({ isOpen, onClose, track, onUpdate
                         </label>
                         <div className="w-full h-40 rounded-lg overflow-hidden border border-slate-600">
                             <img
-                                src={track.image || `https://picsum.photos/seed/${encodeURIComponent(track.title)}/400/400`}
+                                src={track.image || '/placeholder.svg'}
                                 alt={track.title}
                                 className="w-full h-full object-cover"
+                                onError={(e) => { e.target.src = '/placeholder.svg' }}
                             />
                         </div>
                     </div>

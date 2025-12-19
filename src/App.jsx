@@ -6,7 +6,6 @@ import { NotificationProvider } from "./context/NotificationContext"
 import ProtectedRoute from "./components/ProtectedRoute"
 import ErrorBoundary from "./components/ErrorBoundary"
 import Home from "./pages/Home"
-import Genres from "./pages/Genres"
 import Playlists from "./pages/Playlists"
 import Search from "./pages/Search"
 import SignUp from "./pages/SignUp"
@@ -26,7 +25,7 @@ function App() {
               <Router>
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/genres" element={<Genres />} />
+
                   <Route path="/playlists" element={<Playlists />} />
                   <Route path="/search" element={<Search />} />
                   <Route path="/signup" element={<SignUp />} />

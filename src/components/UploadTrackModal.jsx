@@ -13,7 +13,6 @@ export default function UploadTrackModal({ isOpen, onClose, onUploaded }) {
   const [imagePreview, setImagePreview] = useState(null)
   const [title, setTitle] = useState("")
   const [artist, setArtist] = useState("")
-  const [genre, setGenre] = useState("")
   const [tags, setTags] = useState("")
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -79,7 +78,6 @@ export default function UploadTrackModal({ isOpen, onClose, onUploaded }) {
       if (imageFile) formData.append("image", imageFile)
       if (title) formData.append("title", title)
       if (artist) formData.append("artist", artist)
-      if (genre) formData.append("genre", genre)
       if (tags) formData.append("tags", tags)
 
       const track = await trackService.uploadTrack(formData)
@@ -101,7 +99,6 @@ export default function UploadTrackModal({ isOpen, onClose, onUploaded }) {
       setImagePreview(null)
       setTitle("")
       setArtist("")
-      setGenre("")
       setTags("")
       setError("")
       onClose()
@@ -121,7 +118,6 @@ export default function UploadTrackModal({ isOpen, onClose, onUploaded }) {
     setImagePreview(null)
     setTitle("")
     setArtist("")
-    setGenre("")
     setTags("")
     setError("")
     onClose()
@@ -189,64 +185,15 @@ export default function UploadTrackModal({ isOpen, onClose, onUploaded }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium mb-2">Genre</label>
-              <select
-                value={genre}
-                onChange={(e) => setGenre(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500"
-              >
-                <option value="">Select genre...</option>
-                <option value="Pop">Pop</option>
-                <option value="Rock">Rock</option>
-                <option value="Hip Hop">Hip Hop</option>
-                <option value="R&B">R&B</option>
-                <option value="Jazz">Jazz</option>
-                <option value="Classical">Classical</option>
-                <option value="Electronic">Electronic</option>
-                <option value="EDM">EDM</option>
-                <option value="House">House</option>
-                <option value="Techno">Techno</option>
-                <option value="Dubstep">Dubstep</option>
-                <option value="Trance">Trance</option>
-                <option value="Country">Country</option>
-                <option value="Folk">Folk</option>
-                <option value="Blues">Blues</option>
-                <option value="Reggae">Reggae</option>
-                <option value="Metal">Metal</option>
-                <option value="Punk">Punk</option>
-                <option value="Indie">Indie</option>
-                <option value="Alternative">Alternative</option>
-                <option value="Soul">Soul</option>
-                <option value="Funk">Funk</option>
-                <option value="Disco">Disco</option>
-                <option value="Latin">Latin</option>
-                <option value="K-Pop">K-Pop</option>
-                <option value="J-Pop">J-Pop</option>
-                <option value="Anime">Anime</option>
-                <option value="Soundtrack">Soundtrack</option>
-                <option value="Ambient">Ambient</option>
-                <option value="Chill">Chill</option>
-                <option value="Lo-fi">Lo-fi</option>
-                <option value="Trap">Trap</option>
-                <option value="Drill">Drill</option>
-                <option value="Afrobeat">Afrobeat</option>
-                <option value="Gospel">Gospel</option>
-                <option value="World">World</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Tags</label>
-              <input
-                type="text"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-orange-500"
-                placeholder="chill, lofi, relax"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Tags</label>
+            <input
+              type="text"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-orange-500"
+              placeholder="chill, lofi, relax"
+            />
           </div>
 
           {!isAdmin && (

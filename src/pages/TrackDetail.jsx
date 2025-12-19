@@ -29,6 +29,8 @@ export default function TrackDetail() {
   const [isUpdateImageModalOpen, setIsUpdateImageModalOpen] = useState(false)
 
   const isAdmin = user?.role === 'admin'
+  const isTrackOwner = user && track && (track.uploadedBy === user._id || track.uploadedBy === user.id)
+  const canUpdateImage = isAdmin || isTrackOwner
 
   useEffect(() => {
     loadTrack()
@@ -168,7 +170,7 @@ export default function TrackDetail() {
                 }}
                 className="w-80 h-80 rounded-xl object-cover"
               />
-              {isAdmin && (
+              {canUpdateImage && (
                 <button
                   onClick={() => setIsUpdateImageModalOpen(true)}
                   className="absolute bottom-4 right-4 bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-full shadow-lg transition opacity-0 group-hover:opacity-100"

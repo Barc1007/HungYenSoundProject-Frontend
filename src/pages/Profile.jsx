@@ -328,23 +328,6 @@ export default function Profile() {
                 )}
               </div>
 
-              <div>
-                <label className="flex items-center text-slate-400 text-sm font-medium mb-2">
-                  <Music className="w-4 h-4 mr-2 text-orange-400" />
-                  Favorite Genre
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="favoriteGenre"
-                    value={formData.favoriteGenre}
-                    onChange={handleInputChange}
-                    className="w-full bg-slate-700/50 text-white px-4 py-3 rounded-xl border border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition"
-                  />
-                ) : (
-                  <p className="text-white text-lg bg-slate-700/30 px-4 py-3 rounded-xl">{formData.favoriteGenre}</p>
-                )}
-              </div>
             </div>
           </div>
 
