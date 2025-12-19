@@ -274,6 +274,38 @@ export const trackService = {
       return null;
     }
   },
+
+  // Get user's liked tracks
+  async getLikedTracks() {
+    try {
+      const response = await api.get("/auth/liked-tracks");
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || "Failed to fetch liked tracks");
+      }
+      return {
+        tracks: response.data.data.tracks || [],
+        total: response.data.data.total || 0
+      };
+    } catch (error) {
+      console.error("Get liked tracks error:", error);
+      // Return empty array instead of throwing to prevent UI errors
+      return { tracks: [], total: 0 };
+    }
+  },
+
+  // Unlike a track
+  async unlikeTrack(trackId) {
+    try {
+      const response = await api.delete(`/tracks/${trackId}/like`);
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || "Failed to unlike track");
+      }
+      return true;
+    } catch (error) {
+      console.error("Unlike track error:", error);
+      throw error.response?.data || { message: "Failed to unlike track" };
+    }
+  },
 };
 
 export default trackService;
