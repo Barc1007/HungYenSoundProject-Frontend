@@ -189,8 +189,7 @@ export default function TrackDetail() {
               )}
 
               <div className="flex flex-wrap gap-4 mb-6 text-sm text-slate-400">
-                <span>Thể loại: {track.genre || "Unknown"}</span>
-                <span>•</span>
+
                 <span>Thời lượng: {track.duration || "0:00"}</span>
                 <span>•</span>
                 <span>Đăng tải: {formatDate(track.createdAt)}</span>

@@ -271,7 +271,7 @@ export default function AdminUploads() {
                   <tr className="text-left text-slate-400 border-b border-slate-700">
                     <th className="py-3">Title</th>
                     <th className="py-3">Artist</th>
-                    <th className="py-3">Genre</th>
+
                     <th className="py-3">Uploaded</th>
                     <th className="py-3">Status</th>
                     {activeTab === "pending" && <th className="py-3">Approval</th>}
@@ -286,7 +286,7 @@ export default function AdminUploads() {
                         <div className="text-xs text-slate-400">{track.audio}</div>
                       </td>
                       <td className="py-3 text-slate-300">{track.artist || "Unknown"}</td>
-                      <td className="py-3 text-slate-300">{track.genre || "Unknown"}</td>
+
                       <td className="py-3 text-slate-400">
                         {track.createdAt ? new Date(track.createdAt).toLocaleString() : "—"}
                       </td>
