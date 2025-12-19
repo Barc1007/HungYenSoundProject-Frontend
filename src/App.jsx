@@ -64,6 +64,14 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+                  <Route
+                    path="/admin/users"
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminUsers />
+                      </ProtectedRoute>
+                    }
+                  />
                 </Routes>
               </Router>
             </AudioProvider>
