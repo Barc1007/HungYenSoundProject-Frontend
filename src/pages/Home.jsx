@@ -47,7 +47,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-8 md:mb-0">
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">Stream Your Favorite Music</h1>
-                <p className="text-orange-100 mb-6 text-lg">Millions of songs from SoundCloud. Anytime, anywhere.</p>
+                <p className="text-orange-100 mb-6 text-lg">Share and enjoy your favourite songs.</p>
                 <div className="flex space-x-4">
                   <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-full font-medium transition flex items-center">
                     <Play className="mr-2 w-5 h-5" />
