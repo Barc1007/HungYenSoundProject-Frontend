@@ -76,6 +76,32 @@ export const adminService = {
         } catch (error) {
             throw error.response?.data || { message: 'Failed to delete user' };
         }
+    },
+
+    // Approve track
+    async approveTrack(trackId) {
+        try {
+            const response = await api.put(`/admin/tracks/${trackId}/approve`);
+            if (!response.data || !response.data.success) {
+                throw new Error(response.data?.message || 'Failed to approve track');
+            }
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to approve track' };
+        }
+    },
+
+    // Reject track
+    async rejectTrack(trackId, reason = '') {
+        try {
+            const response = await api.put(`/admin/tracks/${trackId}/reject`, { reason });
+            if (!response.data || !response.data.success) {
+                throw new Error(response.data?.message || 'Failed to reject track');
+            }
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || { message: 'Failed to reject track' };
+        }
     }
 };
 
