@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Plus, Trash2, Music, Play, ListMusic, Clock, Sparkles } from "lucide-react"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import CreatePlaylistModal from "../components/CreatePlaylistModal"
 import AddSongsModal from "../components/AddSongsModal"
@@ -218,7 +218,7 @@ export default function MyPlaylists() {
           </div>
         )}
       </main>
-      <Footer />
+      
       <AudioPlayer />
 
       <CreatePlaylistModal

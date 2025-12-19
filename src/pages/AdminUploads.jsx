@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { Play, RefreshCw, Upload, CheckCircle, XCircle, Search, Trash2, Clock, Check, X } from "lucide-react"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import UploadTrackModal from "../components/UploadTrackModal"
 import LoadingSpinner from "../components/LoadingSpinner"
@@ -369,7 +369,7 @@ export default function AdminUploads() {
         </section>
       </main>
 
-      <Footer />
+      
       <AudioPlayer />
 
       <UploadTrackModal

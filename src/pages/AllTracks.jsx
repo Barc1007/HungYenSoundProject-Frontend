@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import TrackCard from "../components/TrackCard"
@@ -150,7 +150,7 @@ export default function AllTracks() {
                     </>
                 )}
             </main>
-            <Footer />
+            
             <AudioPlayer />
         </div>
     )

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Heart, Shield, Trash2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import UploadTrackModal from "../components/UploadTrackModal"
 import TrackCard from "../components/TrackCard"
@@ -437,7 +437,7 @@ export default function Profile() {
         </div>
       </main>
 
-      <Footer />
+      
       <AudioPlayer />
 
       {/* Upload Modal */}

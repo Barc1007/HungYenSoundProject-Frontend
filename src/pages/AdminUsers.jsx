@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Users, Search, Shield, UserX, Trash2, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react"
 import { useSearchParams } from "react-router-dom"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import { useNotification } from "../context/NotificationContext"
@@ -388,7 +388,7 @@ export default function AdminUsers() {
                     )}
                 </div>
             </main>
-            <Footer />
+            
             <AudioPlayer />
         </div>
     )

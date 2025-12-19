@@ -3,7 +3,7 @@ import { Play, Heart, MoreHorizontal, ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import TrackCard from "../components/TrackCard"
@@ -107,7 +107,7 @@ export default function Home() {
           </section>
         )}
       </main>
-      <Footer />
+      
       <AudioPlayer />
     </div>
   )

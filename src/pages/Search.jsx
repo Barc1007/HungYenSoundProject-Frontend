@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate, Link } from "react-router-dom"
 import { Search as SearchIcon, AlertCircle, Play, Music } from "lucide-react"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import TrackCard from "../components/TrackCard"
@@ -140,7 +140,7 @@ export default function Search() {
           </div>
         ) : null}
       </main>
-      <Footer />
+      
       <AudioPlayer />
     </div>
   )

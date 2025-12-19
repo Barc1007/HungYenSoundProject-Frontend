@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
 import { ArrowLeft, Play, Heart, MessageCircle, ImageIcon } from "lucide-react"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import CommentSection from "../components/CommentSection"
 import LoadingSpinner from "../components/LoadingSpinner"
@@ -111,7 +111,7 @@ export default function TrackDetail() {
             <span className="ml-3 text-slate-400">Đang tải...</span>
           </div>
         </main>
-        <Footer />
+        
         <AudioPlayer />
       </div>
     )
@@ -132,7 +132,7 @@ export default function TrackDetail() {
             </Link>
           </div>
         </main>
-        <Footer />
+        
         <AudioPlayer />
       </div>
     )
@@ -229,7 +229,7 @@ export default function TrackDetail() {
           initialComments={track.comments || []}
         />
       </main>
-      <Footer />
+      
       <AudioPlayer />
 
       {/* Update Image Modal */}

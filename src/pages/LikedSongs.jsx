@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom"
 import { Heart, Play, ChevronLeft, ChevronRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import TrackCard from "../components/TrackCard"
 import LoadingSpinner from "../components/LoadingSpinner"
@@ -124,7 +124,7 @@ export default function LikedSongs() {
                         <p className="text-slate-400 text-sm">You need to sign in to view your liked tracks</p>
                     </div>
                 </main>
-                <Footer />
+                
                 <AudioPlayer />
             </div>
         )
@@ -229,7 +229,7 @@ export default function LikedSongs() {
                     </>
                 )}
             </main>
-            <Footer />
+            
             <AudioPlayer />
         </div>
     )

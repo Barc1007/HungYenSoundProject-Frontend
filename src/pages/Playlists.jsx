@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Filter, ArrowDown, X, Play, Music, Clock, TrendingUp, Sparkles } from "lucide-react"
 import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+
 import AudioPlayer from "../components/AudioPlayer"
 import { usePlaylist } from "../context/PlaylistContext"
 import { useAudio } from "../context/AudioContext"
@@ -227,7 +227,7 @@ export default function Playlists() {
           </div>
         )}
       </main>
-      <Footer />
+      
       <AudioPlayer />
     </div>
   )
