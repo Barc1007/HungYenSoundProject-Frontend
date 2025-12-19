@@ -54,9 +54,7 @@ export default function Navbar() {
               <Link to="/" className="text-orange-200 hover:text-white transition">
                 Home
               </Link>
-              <Link to="/genres" className="text-orange-200 hover:text-white transition">
-                Genres
-              </Link>
+
               <Link to="/playlists" className="text-orange-200 hover:text-white transition">
                 Playlists
               </Link>
@@ -126,9 +124,7 @@ export default function Navbar() {
             <Link to="/" className="block text-orange-200 hover:text-white transition py-2">
               Home
             </Link>
-            <Link to="/genres" className="block text-orange-200 hover:text-white transition py-2">
-              Genres
-            </Link>
+
             <Link to="/playlists" className="block text-orange-200 hover:text-white transition py-2">
               Playlists
             </Link>
