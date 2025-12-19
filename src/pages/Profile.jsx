@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, Users, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Sparkles } from "lucide-react"
+import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Sparkles } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
@@ -264,10 +264,6 @@ export default function Profile() {
                         <Calendar className="w-4 h-4 text-orange-400" />
                         <span className="text-slate-300">Joined {formData.joinDate}</span>
                       </div>
-                      <div className="flex items-center gap-2 bg-slate-800/50 px-4 py-2 rounded-full">
-                        <Users className="w-4 h-4 text-orange-400" />
-                        <span className="text-slate-300">{formData.followersCount} followers</span>
-                      </div>
                     </div>
                   </div>
                 )}
@@ -352,23 +348,6 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Stats Card */}
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-orange-400" />
-              Your Stats
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-purple-600/20 to-purple-600/10 p-4 rounded-xl border border-purple-500/20">
-                <p className="text-slate-400 text-sm mb-1">Total Playlists</p>
-                <p className="text-3xl font-bold text-white">{formData.playlistCount}</p>
-              </div>
-              <div className="bg-gradient-to-br from-orange-600/20 to-orange-600/10 p-4 rounded-xl border border-orange-500/20">
-                <p className="text-slate-400 text-sm mb-1">Followers</p>
-                <p className="text-3xl font-bold text-white">{formData.followersCount}</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Account Settings Card */}
