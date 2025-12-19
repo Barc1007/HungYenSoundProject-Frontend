@@ -13,6 +13,7 @@ import Profile from "./pages/Profile"
 import MyPlaylists from "./pages/MyPlaylists"
 import AdminUploads from "./pages/AdminUploads"
 import AdminUsers from "./pages/AdminUsers"
+import AdminUsersTest from "./pages/AdminUsersTest"
 import TrackDetail from "./pages/TrackDetail"
 import LikedSongs from "./pages/LikedSongs"
 import AllTracks from "./pages/AllTracks"
@@ -69,6 +70,14 @@ function App() {
                     element={
                       <ProtectedRoute requiredRole="admin">
                         <AdminUsers />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/users/test"
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminUsersTest />
                       </ProtectedRoute>
                     }
                   />
