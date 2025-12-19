@@ -32,18 +32,22 @@ export default function AdminUsers() {
     const loadUsers = async () => {
         try {
             setLoading(true)
+
+            // Build params object, excluding undefined values
             const params = {
                 page: currentPage,
-                limit: 20,
-                search: searchTerm || undefined,
-                role: roleFilter !== "all" ? roleFilter : undefined,
-                isActive: statusFilter !== "all" ? statusFilter : undefined
+                limit: 20
             }
+
+            if (searchTerm) params.search = searchTerm
+            if (roleFilter !== "all") params.role = roleFilter
+            if (statusFilter !== "all") params.isActive = statusFilter
 
             console.log('Loading users with params:', params)
             const data = await adminService.getUsers(params)
             console.log('Received data:', data)
             console.log('Users array:', data.users)
+            console.log('Users count:', data.users?.length)
             console.log('Stats:', data.stats)
 
             setUsers(data.users || [])
