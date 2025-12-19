@@ -125,9 +125,9 @@ export default function MyPlaylists() {
                     <div className="absolute top-3 left-3">
                       <button
                         onClick={() => handleTogglePublic(playlist)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${playlist.isPublic
-                            ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
-                            : 'bg-slate-700/50 text-slate-400 border border-slate-600/50 hover:bg-slate-700'
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all shadow-lg ${playlist.isPublic
+                          ? 'bg-orange-500 text-white hover:bg-orange-400'
+                          : 'bg-slate-800/90 text-slate-300 border border-slate-600 hover:bg-slate-700'
                           }`}
                         title={playlist.isPublic ? "Click to make private" : "Click to make public"}
                       >
