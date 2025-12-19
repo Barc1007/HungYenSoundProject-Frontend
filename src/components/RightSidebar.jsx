@@ -123,78 +123,60 @@ export default function RightSidebar() {
                                             <Play className="w-4 h-4 text-white" fill="white" />
                                         </div>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm text-slate-300 group-hover:text-white truncate font-medium">
-                                            {track.artist}
-                                        </p>
-                                        <p className="text-sm text-white truncate">{track.title}</p>
-                                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
-                                            <span className="flex items-center gap-1">
-                                                ▶ {formatPlays(track.playCount)}
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                ♥ {formatPlays(track.likeCount)}
-                                            </span>
-                                        </div>
-                                    </div>
+                                    <p className="text-sm text-slate-300 group-hover:text-white truncate font-medium">
+                                        {track.artist}
+                                    </p>
+                                    <p className="text-sm text-white truncate">{track.title}</p>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* Listening History Section */}
-                <div>
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                            <Clock className="w-3 h-3" />
-                            Listening History
-                        </h3>
-                        <Link to="/history" className="text-xs text-slate-500 hover:text-white transition">
-                            View all
-                        </Link>
-                    </div>
-
-                    {history.length === 0 ? (
-                        <p className="text-slate-500 text-sm">No recent plays</p>
-                    ) : (
-                        <div className="space-y-3">
-                            {history.map((item, index) => (
-                                <div
-                                    key={`${item.track._id || item.track.id}-${index}`}
-                                    onClick={() => playTrack(item.track)}
-                                    className="flex gap-3 group cursor-pointer hover:bg-slate-800/30 p-2 -mx-2 rounded-lg transition"
-                                >
-                                    <div className="relative flex-shrink-0">
-                                        <img
-                                            src={item.track.image || "/placeholder.svg"}
-                                            alt={item.track.title}
-                                            className="w-12 h-12 rounded object-cover"
-                                        />
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded">
-                                            <Play className="w-4 h-4 text-white" fill="white" />
-                                        </div>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm text-slate-300 group-hover:text-white truncate font-medium">
-                                            {item.track.artist}
-                                        </p>
-                                        <p className="text-sm text-white truncate">{item.track.title}</p>
-                                        <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
-                                            <span className="flex items-center gap-1">
-                                                ▶ {formatPlays(item.track.playCount)}
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                ♥ {formatPlays(item.track.likeCount)}
-                                            </span>
-                                        </div>
-                                    </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                    ))}
                 </div>
+                    )}
             </div>
-        </aside>
+
+            {/* Listening History Section */}
+            <div>
+                <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                        <Clock className="w-3 h-3" />
+                        Listening History
+                    </h3>
+                    <Link to="/history" className="text-xs text-slate-500 hover:text-white transition">
+                        View all
+                    </Link>
+                </div>
+
+                {history.length === 0 ? (
+                    <p className="text-slate-500 text-sm">No recent plays</p>
+                ) : (
+                    <div className="space-y-3">
+                        {history.map((item, index) => (
+                            <div
+                                key={`${item.track._id || item.track.id}-${index}`}
+                                onClick={() => playTrack(item.track)}
+                                className="flex gap-3 group cursor-pointer hover:bg-slate-800/30 p-2 -mx-2 rounded-lg transition"
+                            >
+                                <div className="relative flex-shrink-0">
+                                    <img
+                                        src={item.track.image || "/placeholder.svg"}
+                                        alt={item.track.title}
+                                        className="w-12 h-12 rounded object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded">
+                                        <Play className="w-4 h-4 text-white" fill="white" />
+                                    </div>
+                                </div>
+                                <p className="text-sm text-slate-300 group-hover:text-white truncate font-medium">
+                                    {item.track.artist}
+                                </p>
+                                <p className="text-sm text-white truncate">{item.track.title}</p>
+                            </div>
+                                </div>
+                ))}
+            </div>
+                    )}
+        </div>
+            </div >
+        </aside >
     )
 }
