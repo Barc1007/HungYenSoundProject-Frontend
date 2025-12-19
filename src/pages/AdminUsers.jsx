@@ -11,6 +11,8 @@ import { useNotification } from "../context/NotificationContext"
 import { adminService } from "../services/adminService"
 
 export default function AdminUsers() {
+    console.log('AdminUsers component rendering')
+
     const [searchParams, setSearchParams] = useSearchParams()
     const [users, setUsers] = useState([])
     const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0, admins: 0 })
@@ -23,6 +25,7 @@ export default function AdminUsers() {
     const { showSuccess, showError } = useNotification()
 
     useEffect(() => {
+        console.log('useEffect triggered, calling loadUsers')
         loadUsers()
     }, [currentPage, searchTerm, roleFilter, statusFilter])
 
