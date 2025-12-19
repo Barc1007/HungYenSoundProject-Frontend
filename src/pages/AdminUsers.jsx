@@ -37,13 +37,20 @@ export default function AdminUsers() {
                 isActive: statusFilter !== "all" ? statusFilter : undefined
             }
 
+            console.log('Loading users with params:', params)
             const data = await adminService.getUsers(params)
-            setUsers(data.users)
-            setStats(data.stats)
-            setTotalPages(data.pagination.totalPages)
+            console.log('Received data:', data)
+            console.log('Users array:', data.users)
+            console.log('Stats:', data.stats)
+
+            setUsers(data.users || [])
+            setStats(data.stats || { total: 0, active: 0, inactive: 0, admins: 0 })
+            setTotalPages(data.pagination?.totalPages || 1)
         } catch (error) {
             console.error("Failed to load users:", error)
+            console.error("Error details:", error.response || error)
             showError(error.message || "Failed to load users")
+            setUsers([])
         } finally {
             setLoading(false)
         }
@@ -120,8 +127,8 @@ export default function AdminUsers() {
                     key={i}
                     onClick={() => handlePageChange(i)}
                     className={`px-4 py-2 rounded-lg font-medium transition ${i === currentPage
-                            ? "bg-orange-600 text-white"
-                            : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                        ? "bg-orange-600 text-white"
+                        : "bg-slate-700 text-slate-300 hover:bg-slate-600"
                         }`}
                 >
                     {i}
@@ -294,8 +301,8 @@ export default function AdminUsers() {
                                                 <td className="px-6 py-4 text-slate-300">{user.email}</td>
                                                 <td className="px-6 py-4">
                                                     <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${user.role === 'admin'
-                                                            ? 'bg-orange-600/20 text-orange-400'
-                                                            : 'bg-slate-700 text-slate-300'
+                                                        ? 'bg-orange-600/20 text-orange-400'
+                                                        : 'bg-slate-700 text-slate-300'
                                                         }`}>
                                                         {user.role === 'admin' && <Shield className="w-3 h-3" />}
                                                         {user.role.toUpperCase()}
@@ -303,8 +310,8 @@ export default function AdminUsers() {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${user.isActive
-                                                            ? 'bg-green-600/20 text-green-400'
-                                                            : 'bg-red-600/20 text-red-400'
+                                                        ? 'bg-green-600/20 text-green-400'
+                                                        : 'bg-red-600/20 text-red-400'
                                                         }`}>
                                                         {user.isActive ? 'Active' : 'Inactive'}
                                                     </span>
@@ -324,8 +331,8 @@ export default function AdminUsers() {
                                                         <button
                                                             onClick={() => handleToggleStatus(user._id, user.isActive)}
                                                             className={`px-3 py-1 rounded-lg text-xs font-medium transition ${user.isActive
-                                                                    ? 'bg-red-600/20 text-red-400 hover:bg-red-600/30'
-                                                                    : 'bg-green-600/20 text-green-400 hover:bg-green-600/30'
+                                                                ? 'bg-red-600/20 text-red-400 hover:bg-red-600/30'
+                                                                : 'bg-green-600/20 text-green-400 hover:bg-green-600/30'
                                                                 }`}
                                                             title={user.isActive ? 'Deactivate' : 'Activate'}
                                                         >
