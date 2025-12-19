@@ -47,8 +47,8 @@ export default function AdminUploads() {
         status: activeTab === "pending" ? "pending" : activeTab === "approved" ? "approved" : undefined,
         search: searchTerm || undefined,
       }
-      const data = await trackService.getTracks(params)
-      setTracks(data)
+      const response = await trackService.getTracks(params)
+      setTracks(response.tracks)
       setError(null)
     } catch (err) {
       console.error("Failed to load tracks:", err)
@@ -204,8 +204,8 @@ export default function AdminUploads() {
           <button
             onClick={() => setActiveTab("pending")}
             className={`px-6 py-3 font-medium transition ${activeTab === "pending"
-                ? "text-orange-400 border-b-2 border-orange-400"
-                : "text-slate-400 hover:text-slate-300"
+              ? "text-orange-400 border-b-2 border-orange-400"
+              : "text-slate-400 hover:text-slate-300"
               }`}
           >
             <div className="flex items-center gap-2">
@@ -216,8 +216,8 @@ export default function AdminUploads() {
           <button
             onClick={() => setActiveTab("approved")}
             className={`px-6 py-3 font-medium transition ${activeTab === "approved"
-                ? "text-orange-400 border-b-2 border-orange-400"
-                : "text-slate-400 hover:text-slate-300"
+              ? "text-orange-400 border-b-2 border-orange-400"
+              : "text-slate-400 hover:text-slate-300"
               }`}
           >
             <div className="flex items-center gap-2">
@@ -235,8 +235,8 @@ export default function AdminUploads() {
                   key={filter.id}
                   onClick={() => setFilterStatus(filter.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium border ${filterStatus === filter.id
-                      ? "bg-orange-600 border-orange-500 text-white"
-                      : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
+                    ? "bg-orange-600 border-orange-500 text-white"
+                    : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
                     }`}
                 >
                   {filter.label}
@@ -340,8 +340,8 @@ export default function AdminUploads() {
                             <button
                               onClick={() => handleToggleStatus(track)}
                               className={`px-3 py-1 rounded-full text-xs font-semibold transition ${track.isActive
-                                  ? "bg-red-900/40 text-red-300 hover:bg-red-800/40"
-                                  : "bg-green-900/40 text-green-300 hover:bg-green-800/40"
+                                ? "bg-red-900/40 text-red-300 hover:bg-red-800/40"
+                                : "bg-green-900/40 text-green-300 hover:bg-green-800/40"
                                 }`}
                             >
                               {track.isActive ? "Disable" : "Enable"}
