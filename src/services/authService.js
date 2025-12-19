@@ -126,6 +126,26 @@ export const authService = {
     }
   },
 
+  // Get user's liked tracks
+  async getLikedTracks(params = {}) {
+    try {
+      const searchParams = new URLSearchParams(params);
+      const response = await api.get(`/auth/liked-tracks?${searchParams.toString()}`);
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || 'Failed to fetch liked tracks');
+      }
+      return {
+        tracks: response.data.data.tracks,
+        total: response.data.total,
+        totalPages: response.data.totalPages,
+        page: response.data.page,
+        count: response.data.count
+      };
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to fetch liked tracks' };
+    }
+  },
+
   // Logout user
   async logout() {
     try {

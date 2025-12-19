@@ -1,12 +1,13 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Sparkles } from "lucide-react"
+import { ArrowLeft, Edit2, Save, X, Mail, Calendar, Music, LogOut, Upload, Camera, Eye, EyeOff, Lock, User, Sparkles, Heart } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import AudioPlayer from "../components/AudioPlayer"
 import UploadTrackModal from "../components/UploadTrackModal"
+import TrackCard from "../components/TrackCard"
 import { useUser } from "../context/UserContext"
 import { useNotification } from "../context/NotificationContext"
 import { authService } from "../services/authService"
@@ -37,6 +38,9 @@ export default function Profile() {
   const [showDeletePassword, setShowDeletePassword] = useState(false)
   const [deletingAccount, setDeletingAccount] = useState(false)
   const fileInputRef = useRef(null)
+  const [likedTracks, setLikedTracks] = useState([])
+  const [loadingLikedTracks, setLoadingLikedTracks] = useState(true)
+  const [likedTracksError, setLikedTracksError] = useState(null)
 
   useEffect(() => {
     setFormData(user)
@@ -175,7 +179,33 @@ export default function Profile() {
       showError(error.message || 'Không thể xóa tài khoản')
     } finally {
       setDeletingAccount(false)
+      setDeletePassword('')
     }
+  }
+
+  // Load liked tracks
+  useEffect(() => {
+    const loadLikedTracks = async () => {
+      try {
+        setLoadingLikedTracks(true)
+        const response = await authService.getLikedTracks({ limit: 6 })
+        setLikedTracks(response.tracks)
+        setLikedTracksError(null)
+      } catch (error) {
+        console.error('Failed to load liked tracks:', error)
+        setLikedTracksError(error.message || 'Failed to load liked tracks')
+      } finally {
+        setLoadingLikedTracks(false)
+      }
+    }
+
+    loadLikedTracks()
+  }, [])
+
+  const handleLikedTrackUpdate = (updatedTrack) => {
+    setLikedTracks(likedTracks.map(t =>
+      (t.id || t.mongoId) === (updatedTrack.id || updatedTrack.mongoId) ? updatedTrack : t
+    ))
   }
 
   return (
@@ -380,6 +410,53 @@ export default function Profile() {
               <span className="text-orange-300 group-hover:text-orange-200 transition font-semibold">Logout</span>
             </button>
           </div>
+        </div>
+
+        {/* Liked Tracks Section */}
+        <div className="bg-slate-900/40 border border-slate-700 rounded-3xl p-6 mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-3">
+              <Heart className="w-6 h-6 text-red-400" />
+              <h2 className="text-2xl font-bold">Liked Tracks</h2>
+            </div>
+            <Link
+              to="/liked-songs"
+              className="text-orange-400 hover:text-orange-300 transition text-sm font-medium"
+            >
+              View All →
+            </Link>
+          </div>
+
+          {loadingLikedTracks ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-slate-400">Loading liked tracks...</div>
+            </div>
+          ) : likedTracksError ? (
+            <div className="text-center py-12 text-slate-400">
+              {likedTracksError}
+            </div>
+          ) : likedTracks.length === 0 ? (
+            <div className="text-center py-12">
+              <Heart className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-400">You haven't liked any tracks yet</p>
+              <Link
+                to="/tracks"
+                className="inline-block mt-4 text-orange-400 hover:text-orange-300 transition"
+              >
+                Discover tracks →
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {likedTracks.map((track) => (
+                <TrackCard
+                  key={track.id || track.mongoId}
+                  track={track}
+                  onUpdate={handleLikedTrackUpdate}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
       <Footer />
