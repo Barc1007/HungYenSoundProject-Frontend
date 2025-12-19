@@ -49,12 +49,18 @@ export default function Home() {
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">Stream Your Favorite Music</h1>
                 <p className="text-orange-100 mb-6 text-lg">Share and enjoy your favourite songs.</p>
                 <div className="flex space-x-4">
-                  <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-full font-medium transition flex items-center">
+                  <button
+                    onClick={() => {
+                      if (tracks.length > 0) {
+                        const randomTrack = tracks[Math.floor(Math.random() * tracks.length)]
+                        playTrack(randomTrack)
+                      }
+                    }}
+                    disabled={tracks.length === 0}
+                    className="bg-orange-600 hover:bg-orange-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-3 rounded-full font-medium transition flex items-center"
+                  >
                     <Play className="mr-2 w-5 h-5" />
                     Play Now
-                  </button>
-                  <button className="border border-orange-400 text-orange-400 hover:bg-orange-400/10 px-6 py-3 rounded-full font-medium transition">
-                    Explore
                   </button>
                 </div>
               </div>
