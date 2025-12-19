@@ -33,9 +33,9 @@ export default function Navbar() {
       <nav className="bg-gradient-to-r from-orange-900 to-indigo-900 px-6 py-4 shadow-lg">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/logo.png" alt="HYSound" className="w-8 h-8 rounded-full" />
+            <img src="/logo.png" alt="HungYenSound" className="w-8 h-8 rounded-full" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-indigo-400">
-              HYSound
+              HungYenSound
             </span>
           </Link>
 
