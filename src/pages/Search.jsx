@@ -15,7 +15,7 @@ export default function Search() {
   const [searchParams, setSearchParams] = useSearchParams()
   const navigate = useNavigate()
   const { playTrack } = useAudio()
-  
+
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '')
   const [tracks, setTracks] = useState([])
   const [loading, setLoading] = useState(false)
@@ -42,13 +42,13 @@ export default function Search() {
       setLoading(true)
       setError("")
       // Search tracks from database (works for all users)
-      const data = await trackService.getTracks({ 
+      const response = await trackService.getTracks({
         source: "local",
         search: searchQuery,
         limit: 50
       })
-      setTracks(data)
-      if (data.length === 0) {
+      setTracks(response.tracks)
+      if (response.tracks.length === 0) {
         setError(`No tracks found for "${searchQuery}"`)
       }
     } catch (err) {
@@ -124,7 +124,7 @@ export default function Search() {
                   key={track.id || track.mongoId}
                   track={track}
                   onUpdate={(updated) => {
-                    setTracks(tracks.map(t => 
+                    setTracks(tracks.map(t =>
                       (t.id || t.mongoId) === (updated.id || updated.mongoId) ? updated : t
                     ))
                   }}
