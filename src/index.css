@@ -2,6 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 * {
   margin: 0;
   padding: 0;
@@ -93,4 +94,111 @@ input[type="range"]::-moz-range-thumb {
   border-radius: 50%;
   cursor: pointer;
   border: none;
+}
+
+/* Global Button Improvements */
+button {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Icon buttons - make them rounded */
+button:has(svg:only-child) {
+  border-radius: 50%;
+}
+
+/* Small action buttons */
+.btn-icon {
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+
+/* Primary button style */
+.btn-primary {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+}
+
+/* Secondary button style */
+.btn-secondary {
+  background: rgba(51, 65, 85, 0.5);
+  color: #e2e8f0;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(51, 65, 85, 0.8);
+  border-color: rgba(100, 116, 139, 0.5);
+}
+
+/* Danger button style */
+.btn-danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Input fields improvement */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
 }
