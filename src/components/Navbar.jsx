@@ -64,9 +64,14 @@ export default function Navbar() {
                 </Link>
               )}
               {user?.role === "admin" && (
-                <Link to="/admin/uploads" className="text-orange-200 hover:text-white transition">
-                  Admin
-                </Link>
+                <>
+                  <Link to="/admin/uploads" className="text-orange-200 hover:text-white transition">
+                    Uploads
+                  </Link>
+                  <Link to="/admin/users" className="text-orange-200 hover:text-white transition">
+                    Users
+                  </Link>
+                </>
               )}
             </div>
           </div>
