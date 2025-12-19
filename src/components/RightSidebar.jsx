@@ -77,8 +77,8 @@ export default function RightSidebar() {
     }
 
     return (
-        <aside className="w-80 flex-shrink-0 hidden xl:block pl-6">
-            <div className="sticky top-24 space-y-6">
+        <aside className="w-80 flex-shrink-0 hidden xl:block">
+            <div className="fixed w-80 top-20 right-[max(1rem,calc((100vw-1280px)/2+1rem))] max-h-[calc(100vh-8rem)] overflow-y-auto pr-4 space-y-6 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                 {/* Likes Section */}
                 <div>
                     <div className="flex items-center justify-between mb-3">
