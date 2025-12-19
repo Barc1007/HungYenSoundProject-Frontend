@@ -1,7 +1,7 @@
 "use client"
 
 import { useAudio } from "../context/AudioContext"
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Heart, List, Repeat, Shuffle, Maximize2 } from "lucide-react"
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Heart, Menu, Repeat, Shuffle, X } from "lucide-react"
 import { useState } from "react"
 
 export default function AudioPlayer() {
@@ -14,8 +14,8 @@ export default function AudioPlayer() {
     isShuffle,
     repeatMode,
     isTrackLiked,
-    showQueue,
-    isFullscreen,
+    queue,
+    currentIndex,
     togglePlayPause,
     seek,
     playNext,
@@ -24,12 +24,12 @@ export default function AudioPlayer() {
     toggleShuffle,
     toggleRepeat,
     toggleLike,
-    toggleQueue,
-    toggleFullscreen,
     formatTime,
+    playTrack,
   } = useAudio()
 
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
+  const [showQueue, setShowQueue] = useState(false)
 
   const progressPercentage = duration ? (currentTime / duration) * 100 : 0
 
@@ -41,6 +41,9 @@ export default function AudioPlayer() {
     toggleLike()
   }
 
+  // Get upcoming tracks (next 5 tracks after current)
+  const upcomingTracks = queue.slice(currentIndex + 1, currentIndex + 6)
+
   // Don't show player if no track is loaded
   if (!currentTrack.audio && !currentTrack.title) {
     return null
@@ -51,17 +54,14 @@ export default function AudioPlayer() {
       {/* Progress Bar - Full Width at Top */}
       <div className="absolute top-0 left-0 right-0 group">
         <div className="relative h-1 bg-slate-800/50 overflow-hidden">
-          {/* Background glow effect */}
           <div
             className="absolute h-full bg-gradient-to-r from-orange-500/20 via-orange-400/20 to-orange-500/20 transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}
           />
-          {/* Actual progress */}
           <div
             className="absolute h-full bg-gradient-to-r from-orange-600 via-orange-500 to-orange-400 shadow-lg shadow-orange-500/50 transition-all duration-100"
             style={{ width: `${progressPercentage}%` }}
           />
-          {/* Hover effect */}
           <input
             type="range"
             min="0"
@@ -70,7 +70,6 @@ export default function AudioPlayer() {
             onChange={(e) => seek((e.target.value / 100) * duration)}
             className="absolute w-full h-full opacity-0 cursor-pointer z-10 group-hover:h-2 transition-all"
           />
-          {/* Progress thumb */}
           <div
             className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
             style={{ left: `${progressPercentage}%`, transform: `translate(-50%, -50%)` }}
@@ -182,17 +181,13 @@ export default function AudioPlayer() {
                 {formatTime(currentTime)}
               </span>
               <div className="flex-1 relative h-1.5 group cursor-pointer">
-                {/* Track background */}
                 <div className="absolute w-full h-full bg-slate-700/50 rounded-full overflow-hidden">
-                  {/* Buffered/loaded shimmer effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-600/30 to-transparent animate-shimmer" />
                 </div>
-                {/* Progress */}
                 <div
                   className="absolute h-full bg-gradient-to-r from-orange-600 via-orange-500 to-orange-400 rounded-full shadow-md shadow-orange-500/50 group-hover:h-2 transition-all"
                   style={{ width: `${progressPercentage}%` }}
                 />
-                {/* Interactive overlay */}
                 <input
                   type="range"
                   min="0"
@@ -201,7 +196,6 @@ export default function AudioPlayer() {
                   onChange={(e) => seek((e.target.value / 100) * duration)}
                   className="absolute w-full h-full opacity-0 cursor-pointer z-10"
                 />
-                {/* Hover thumb */}
                 <div
                   className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none"
                   style={{ left: `${progressPercentage}%`, transform: `translate(-50%, -50%)` }}
@@ -213,19 +207,72 @@ export default function AudioPlayer() {
             </div>
           </div>
 
-          {/* Right Section - Volume & Options */}
+          {/* Right Section - Volume & Queue */}
           <div className="flex items-center gap-4 w-[280px] justify-end">
-            <button
-              onClick={toggleQueue}
-              className={`transition-all duration-200 ${showQueue
-                ? 'text-orange-400 scale-110'
-                : 'text-slate-400 hover:text-white hover:scale-110'
-                }`}
-              title="Queue"
-            >
-              <List className="w-5 h-5" />
-            </button>
+            {/* Queue Button with Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowQueue(!showQueue)}
+                className={`transition-all duration-200 ${showQueue
+                  ? 'text-orange-400 scale-110'
+                  : 'text-slate-400 hover:text-white hover:scale-110'
+                  }`}
+                title="Up Next"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
 
+              {/* Queue Dropdown */}
+              {showQueue && (
+                <div className="absolute bottom-full right-0 mb-3 w-72 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/50">
+                    <h3 className="text-sm font-semibold text-white">Up Next</h3>
+                    <button
+                      onClick={() => setShowQueue(false)}
+                      className="text-slate-400 hover:text-white"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    {upcomingTracks.length === 0 ? (
+                      <p className="text-slate-500 text-sm text-center py-6">No upcoming tracks</p>
+                    ) : (
+                      upcomingTracks.map((track, idx) => (
+                        <div
+                          key={track._id || track.id || idx}
+                          onClick={() => {
+                            playTrack(track, queue, currentIndex + 1 + idx)
+                            setShowQueue(false)
+                          }}
+                          className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800/50 cursor-pointer transition"
+                        >
+                          <span className="text-slate-500 text-xs w-4">{idx + 1}</span>
+                          <img
+                            src={track.image || "/placeholder.svg"}
+                            alt={track.title}
+                            className="w-10 h-10 rounded object-cover"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm text-white truncate">{track.title}</p>
+                            <p className="text-xs text-slate-400 truncate">{track.artist}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {queue.length > currentIndex + 6 && (
+                    <div className="px-4 py-2 border-t border-slate-700/50">
+                      <p className="text-xs text-slate-500 text-center">
+                        +{queue.length - currentIndex - 6} more tracks
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Volume Control */}
             <div
               className="flex items-center gap-2 group"
               onMouseEnter={() => setShowVolumeSlider(true)}
@@ -266,17 +313,6 @@ export default function AudioPlayer() {
                 </div>
               </div>
             </div>
-
-            <button
-              onClick={toggleFullscreen}
-              className={`transition-all duration-200 ${isFullscreen
-                ? 'text-orange-400 scale-110'
-                : 'text-slate-400 hover:text-white hover:scale-110'
-                }`}
-              title="Fullscreen Player"
-            >
-              <Maximize2 className="w-4 h-4" />
-            </button>
           </div>
         </div>
       </div>
