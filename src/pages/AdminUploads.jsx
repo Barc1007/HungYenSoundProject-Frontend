@@ -100,14 +100,14 @@ export default function AdminUploads() {
   }
 
   const handleApproveTrack = async (track) => {
-    if (!window.confirm(`Approve track "${track.title}"?\n\nAn email notification will be sent to the uploader.`)) {
+    if (!window.confirm(`Approve track "${track.title}"?`)) {
       return
     }
 
     try {
       const { adminService } = await import('../services/adminService')
       await adminService.approveTrack(track.mongoId || track.id)
-      showSuccess(`Track approved! Email sent to uploader.`)
+      showSuccess(`Track approved successfully!`)
       fetchTracks()
     } catch (err) {
       console.error("Failed to approve track:", err)
