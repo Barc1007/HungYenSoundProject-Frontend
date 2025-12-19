@@ -208,9 +208,51 @@ export default function AudioPlayer() {
           </div>
 
           {/* Right Section - Volume & Queue */}
-          <div className="flex items-center gap-6 w-[200px] justify-end">
+          <div className="flex items-center gap-5 w-[200px] justify-end">
+            {/* Volume Control */}
+            <div
+              className="flex items-center gap-2 group"
+              onMouseEnter={() => setShowVolumeSlider(true)}
+              onMouseLeave={() => setShowVolumeSlider(false)}
+            >
+              <button
+                onClick={toggleMute}
+                className="text-slate-400 hover:text-white hover:scale-110 transition-all duration-200"
+                title={volume === 0 ? "Unmute" : "Mute"}
+              >
+                {volume === 0 ? (
+                  <VolumeX className="w-5 h-5" />
+                ) : (
+                  <Volume2 className="w-5 h-5" />
+                )}
+              </button>
+              <div className={`flex items-center gap-2 transition-all duration-300 overflow-hidden ${showVolumeSlider ? 'w-24 opacity-100' : 'w-0 opacity-0'
+                }`}>
+                <div className="relative flex-1 h-1.5 group/volume cursor-pointer">
+                  <div className="absolute w-full h-full bg-slate-700/50 rounded-full" />
+                  <div
+                    className="absolute h-full bg-gradient-to-r from-slate-400 to-slate-300 rounded-full group-hover/volume:h-2 transition-all"
+                    style={{ width: `${volume * 100}%` }}
+                  />
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
+                    className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md opacity-0 group-hover/volume:opacity-100 transition-opacity pointer-events-none"
+                    style={{ left: `${volume * 100}%`, transform: `translate(-50%, -50%)` }}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Queue Button with Dropdown */}
-            <div className="relative">
+            <div className="relative flex items-center">
               <button
                 onClick={() => setShowQueue(!showQueue)}
                 className={`transition-all duration-200 ${showQueue
@@ -270,48 +312,6 @@ export default function AudioPlayer() {
                   )}
                 </div>
               )}
-            </div>
-
-            {/* Volume Control */}
-            <div
-              className="flex items-center gap-2 group"
-              onMouseEnter={() => setShowVolumeSlider(true)}
-              onMouseLeave={() => setShowVolumeSlider(false)}
-            >
-              <button
-                onClick={toggleMute}
-                className="text-slate-400 hover:text-white hover:scale-110 transition-all duration-200"
-                title={volume === 0 ? "Unmute" : "Mute"}
-              >
-                {volume === 0 ? (
-                  <VolumeX className="w-5 h-5" />
-                ) : (
-                  <Volume2 className="w-5 h-5" />
-                )}
-              </button>
-              <div className={`flex items-center gap-2 transition-all duration-300 overflow-hidden ${showVolumeSlider ? 'w-24 opacity-100' : 'w-0 opacity-0'
-                }`}>
-                <div className="relative flex-1 h-1.5 group/volume cursor-pointer">
-                  <div className="absolute w-full h-full bg-slate-700/50 rounded-full" />
-                  <div
-                    className="absolute h-full bg-gradient-to-r from-slate-400 to-slate-300 rounded-full group-hover/volume:h-2 transition-all"
-                    style={{ width: `${volume * 100}%` }}
-                  />
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={volume}
-                    onChange={(e) => setVolume(parseFloat(e.target.value))}
-                    className="absolute w-full h-full opacity-0 cursor-pointer z-10"
-                  />
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md opacity-0 group-hover/volume:opacity-100 transition-opacity pointer-events-none"
-                    style={{ left: `${volume * 100}%`, transform: `translate(-50%, -50%)` }}
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>
