@@ -65,69 +65,11 @@ export default function Playlists() {
           </div>
         </div>
 
-        {/* Filters & Sort Bar */}
-        <div className="flex flex-wrap justify-between items-center mb-8 gap-4">
-          <div className="flex items-center gap-3">
-            {genre && (
-              <div className="flex items-center gap-2 bg-orange-600/20 border border-orange-500/30 px-4 py-2 rounded-full">
-                <span className="text-orange-300 font-medium">{genre}</span>
-                <button
-                  onClick={() => setSearchParams({})}
-                  className="text-orange-400 hover:text-orange-300 transition"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-            <span className="text-slate-400 text-sm">
-              {sortedPlaylists.length} playlists
-            </span>
-          </div>
-
-          <div className="flex gap-3">
-            {/* Genre Filter */}
-            <div className="relative">
-              <button
-                onClick={() => setFilterOpen(!filterOpen)}
-                className="bg-slate-800/50 hover:bg-slate-700/50 text-white px-5 py-2.5 rounded-full text-sm font-medium transition flex items-center gap-2 border border-slate-700/50"
-              >
-                <Filter className="w-4 h-4" />
-                Filter
-              </button>
-
-              {filterOpen && (
-                <div className="absolute top-full mt-2 right-0 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-3 min-w-[200px] z-20">
-                  <p className="text-xs text-slate-400 mb-2 px-2">Genres</p>
-                  {genres.map((g) => (
-                    <button
-                      key={g}
-                      onClick={() => {
-                        setSearchParams({ genre: g.toLowerCase() })
-                        setFilterOpen(false)
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${genre === g.toLowerCase()
-                          ? 'bg-orange-600/20 text-orange-400'
-                          : 'text-slate-300 hover:bg-slate-700/50'
-                        }`}
-                    >
-                      {g}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Sort */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-slate-800/50 hover:bg-slate-700/50 text-white px-5 py-2.5 rounded-full text-sm font-medium transition border border-slate-700/50 cursor-pointer"
-            >
-              <option value="recent">Most Recent</option>
-              <option value="popular">Most Popular</option>
-              <option value="name">A-Z</option>
-            </select>
-          </div>
+        {/* Info Bar */}
+        <div className="flex items-center mb-8">
+          <span className="text-slate-400 text-sm">
+            {sortedPlaylists.length} playlists
+          </span>
         </div>
 
         {/* Playlists Grid */}
@@ -227,7 +169,7 @@ export default function Playlists() {
           </div>
         )}
       </main>
-      
+
       <AudioPlayer />
     </div>
   )
