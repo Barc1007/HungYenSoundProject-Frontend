@@ -353,12 +353,6 @@ export default function AdminUploads() {
                               {track.isActive ? "Disable" : "Enable"}
                             </button>
                           )}
-                          <button
-                            onClick={() => handleDeleteTrack(track)}
-                            className="p-2 rounded-full bg-slate-800 hover:bg-red-800/40 text-red-300 transition"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
                         </div>
                       </td>
                     </tr>

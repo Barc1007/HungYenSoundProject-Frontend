@@ -345,13 +345,6 @@ export default function AdminUsers() {
                                                         >
                                                             {user.isActive ? 'Deactivate' : 'Activate'}
                                                         </button>
-                                                        <button
-                                                            onClick={() => handleDeleteUser(user._id, user.name)}
-                                                            className="p-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition"
-                                                            title="Delete user"
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -388,7 +381,7 @@ export default function AdminUsers() {
                     )}
                 </div>
             </main>
-            
+
             <AudioPlayer />
         </div>
     )
