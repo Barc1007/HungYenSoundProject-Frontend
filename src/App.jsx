@@ -20,6 +20,7 @@ import LikedSongs from "./pages/LikedSongs"
 import Liked from "./pages/Liked"
 import History from "./pages/History"
 import AllTracks from "./pages/AllTracks"
+import AuthCallback from "./pages/AuthCallback"
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/playlists" element={<Playlists />} />
                     <Route path="/search" element={<Search />} />
                     <Route path="/signup" element={<SignUp />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
                     <Route path="/track/:id" element={<TrackDetail />} />
                     <Route
                       path="/liked-songs"
