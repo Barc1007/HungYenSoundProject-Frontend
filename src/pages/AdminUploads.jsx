@@ -42,6 +42,7 @@ export default function AdminUploads() {
       setIsRefreshing(true)
       const params = {
         source: "local",
+        limit: 1000, // Get all tracks for admin panel
         includeInactive: true,
         includePending: activeTab === "pending" ? "true" : undefined,
         status: activeTab === "pending" ? "pending" : activeTab === "approved" ? "approved" : undefined,
@@ -369,7 +370,7 @@ export default function AdminUploads() {
         </section>
       </main>
 
-      
+
       <AudioPlayer />
 
       <UploadTrackModal
