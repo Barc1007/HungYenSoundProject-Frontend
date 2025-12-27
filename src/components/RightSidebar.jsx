@@ -1,5 +1,5 @@
 "use client"
-import { Heart, Clock, Play, Globe, ChevronDown, MessageSquare, RotateCcw, Headphones } from "lucide-react"
+import { Heart, Clock, Play, Globe, ChevronDown, MessageSquare, Headphones } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import { useUser } from "../context/UserContext"
@@ -114,16 +114,12 @@ export default function RightSidebar() {
                 {showStats && (
                     <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
                         <span className="flex items-center gap-1">
-                            <Play className="w-3 h-3" />
-                            {formatNumber(track.playCount || 0)}
+                            <Headphones className="w-3 h-3" />
+                            {formatNumber(track.viewCount || 0)}
                         </span>
                         <span className="flex items-center gap-1">
                             <Heart className="w-3 h-3" />
                             {formatNumber(track.likeCount || 0)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                            <RotateCcw className="w-3 h-3" />
-                            {formatNumber(track.repostCount || 0)}
                         </span>
                         <span className="flex items-center gap-1">
                             <MessageSquare className="w-3 h-3" />
