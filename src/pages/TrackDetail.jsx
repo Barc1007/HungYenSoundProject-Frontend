@@ -111,7 +111,7 @@ export default function TrackDetail() {
             <span className="ml-3 text-slate-400">Đang tải...</span>
           </div>
         </main>
-        
+
         <AudioPlayer />
       </div>
     )
@@ -125,14 +125,14 @@ export default function TrackDetail() {
           <div className="text-center py-20">
             <p className="text-slate-300 text-lg mb-4">Không tìm thấy bài hát</p>
             <Link
-              to="/genres"
+              to="/"
               className="text-orange-400 hover:text-orange-300 transition"
             >
               Quay lại trang chủ
             </Link>
           </div>
         </main>
-        
+
         <AudioPlayer />
       </div>
     )
@@ -144,7 +144,7 @@ export default function TrackDetail() {
       <main className="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
         {/* Back Button */}
         <Link
-          to="/genres"
+          to="/"
           className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 transition mb-6"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -229,7 +229,7 @@ export default function TrackDetail() {
           initialComments={track.comments || []}
         />
       </main>
-      
+
       <AudioPlayer />
 
       {/* Update Image Modal */}
