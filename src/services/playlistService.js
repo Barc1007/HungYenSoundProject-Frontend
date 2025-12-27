@@ -193,7 +193,32 @@ export const playlistService = {
       throw error.response?.data || { message: 'Failed to upload playlist image' };
     }
   },
+
+  // Increment view count when playlist detail page is viewed
+  async incrementViewCount(playlistId) {
+    try {
+      const response = await api.post(`/playlists/${playlistId}/view`);
+      return response.data?.data?.viewCount || 0;
+    } catch (error) {
+      console.error('Increment playlist view count error:', error);
+      // Don't throw, just log - view count is not critical
+      return 0;
+    }
+  },
+
+  // Increment play count when playlist starts playing
+  async incrementPlayCount(playlistId) {
+    try {
+      const response = await api.post(`/playlists/${playlistId}/play`);
+      return response.data?.data?.playCount || 0;
+    } catch (error) {
+      console.error('Increment playlist play count error:', error);
+      // Don't throw, just log - play count is not critical
+      return 0;
+    }
+  },
 };
 
 export default playlistService;
+
 

@@ -306,8 +306,33 @@ export const trackService = {
       throw error.response?.data || { message: "Failed to unlike track" };
     }
   },
+
+  // Increment view count when track detail page is viewed
+  async incrementViewCount(trackId) {
+    try {
+      const response = await api.post(`/tracks/${trackId}/view`);
+      return response.data?.data?.viewCount || 0;
+    } catch (error) {
+      console.error("Increment view count error:", error);
+      // Don't throw, just log - view count is not critical
+      return 0;
+    }
+  },
+
+  // Increment play count when track starts playing
+  async incrementPlayCount(trackId) {
+    try {
+      const response = await api.post(`/tracks/${trackId}/play`);
+      return response.data?.data?.playCount || 0;
+    } catch (error) {
+      console.error("Increment play count error:", error);
+      // Don't throw, just log - play count is not critical
+      return 0;
+    }
+  },
 };
 
 export default trackService;
+
 
 
