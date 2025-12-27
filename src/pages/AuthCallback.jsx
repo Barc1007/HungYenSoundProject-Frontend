@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { authService } from '../services/authService';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function AuthCallback() {
@@ -10,14 +11,25 @@ export default function AuthCallback() {
     const navigate = useNavigate();
     const { setUser } = useUser();
     const [error, setError] = useState(null);
+    const [processed, setProcessed] = useState(false);
 
     useEffect(() => {
+        // Prevent double processing
+        if (processed) return;
+
         const handleCallback = async () => {
             const token = searchParams.get('token');
             const userDataEncoded = searchParams.get('user');
             const errorParam = searchParams.get('error');
 
+            console.log('🔑 OAuth Callback received:', {
+                hasToken: !!token,
+                hasUser: !!userDataEncoded,
+                error: errorParam
+            });
+
             if (errorParam) {
+                console.error('OAuth error:', errorParam);
                 setError(getErrorMessage(errorParam));
                 setTimeout(() => navigate('/signup'), 3000);
                 return;
@@ -25,31 +37,39 @@ export default function AuthCallback() {
 
             if (token && userDataEncoded) {
                 try {
-                    // Store token
-                    localStorage.setItem('authToken', token);
+                    setProcessed(true);
 
-                    // Parse and store user data
+                    // Decode and parse user data
                     const userData = JSON.parse(decodeURIComponent(userDataEncoded));
-                    localStorage.setItem('user', JSON.stringify(userData));
+                    console.log('👤 User data received:', userData);
+
+                    // Store token using authService
+                    authService.storeAuthData(userData, token);
 
                     // Update context
                     setUser(userData);
 
-                    // Redirect to home
-                    navigate('/');
+                    console.log('✅ OAuth login successful, redirecting to home...');
+
+                    // Small delay to ensure state is updated before redirect
+                    setTimeout(() => {
+                        navigate('/', { replace: true });
+                    }, 100);
+
                 } catch (error) {
                     console.error('Error processing OAuth callback:', error);
                     setError('Đã có lỗi xảy ra khi xử lý đăng nhập');
                     setTimeout(() => navigate('/signup'), 3000);
                 }
             } else {
+                console.error('Missing token or user data');
                 setError('Thiếu thông tin xác thực');
                 setTimeout(() => navigate('/signup'), 3000);
             }
         };
 
         handleCallback();
-    }, [searchParams, navigate, setUser]);
+    }, [searchParams, navigate, setUser, processed]);
 
     const getErrorMessage = (errorCode) => {
         switch (errorCode) {

@@ -18,7 +18,7 @@ export function UserProvider({ children }) {
       try {
         const storedUser = authService.getStoredUser()
         const isAuthenticated = authService.isAuthenticated()
-        
+
         if (storedUser && isAuthenticated) {
           // Verify token is still valid by fetching fresh user data
           try {
@@ -45,15 +45,15 @@ export function UserProvider({ children }) {
     try {
       setLoading(true)
       setError(null)
-      
+
       const response = await authService.login(credentials)
       const { user: userData, token } = response.data
-      
+
       // Store auth data
       authService.storeAuthData(userData, token)
       setUser(userData)
       showSuccess("Login successful!")
-      
+
       return { success: true, user: userData }
     } catch (error) {
       const errorMessage = error.message || 'Login failed'
@@ -68,15 +68,15 @@ export function UserProvider({ children }) {
     try {
       setLoading(true)
       setError(null)
-      
+
       const response = await authService.register(userData)
       const { user: newUser, token } = response.data
-      
+
       // Store auth data
       authService.storeAuthData(newUser, token)
       setUser(newUser)
       showSuccess("Account created successfully!")
-      
+
       return { success: true, user: newUser }
     } catch (error) {
       // Extract error message from response
@@ -88,12 +88,12 @@ export function UserProvider({ children }) {
       } else if (typeof error === 'string') {
         errorMessage = error
       }
-      
+
       // Handle validation errors array
       if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
         errorMessage = error.response.data.errors.join(', ')
       }
-      
+
       setError(errorMessage)
       showError(errorMessage)
       return { success: false, error: errorMessage }
@@ -106,15 +106,15 @@ export function UserProvider({ children }) {
     try {
       setLoading(true)
       setError(null)
-      
+
       const response = await authService.updateProfile(updatedData)
       const updatedUser = response.data.user
-      
+
       // Update stored user data
       authService.storeAuthData(updatedUser, localStorage.getItem('authToken'))
       setUser(updatedUser)
       showSuccess("Profile updated successfully!")
-      
+
       return { success: true, user: updatedUser }
     } catch (error) {
       const errorMessage = error.message || 'Failed to update profile'
@@ -142,15 +142,16 @@ export function UserProvider({ children }) {
   }
 
   return (
-    <UserContext.Provider 
-      value={{ 
-        user, 
-        loading, 
-        error, 
-        login, 
-        register, 
-        updateUser, 
-        logout, 
+    <UserContext.Provider
+      value={{
+        user,
+        setUser, // For OAuth callback
+        loading,
+        error,
+        login,
+        register,
+        updateUser,
+        logout,
         clearError,
         isAuthenticated: !!user
       }}
