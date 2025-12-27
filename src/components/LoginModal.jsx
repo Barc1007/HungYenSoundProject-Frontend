@@ -183,7 +183,12 @@ export default function LoginModal({ isOpen, onClose }) {
           <button
             type="button"
             onClick={() => {
-              const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+              // Get base URL (remove /api if present since we need to go to /api/auth/google)
+              let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+              // Remove trailing /api if exists to avoid /api/api/
+              if (apiUrl.endsWith('/api')) {
+                apiUrl = apiUrl.slice(0, -4);
+              }
               window.location.href = `${apiUrl}/api/auth/google`;
             }}
             disabled={isLoading}
