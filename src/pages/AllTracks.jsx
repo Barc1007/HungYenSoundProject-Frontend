@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar"
 import AudioPlayer from "../components/AudioPlayer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import TrackCard from "../components/TrackCard"
+import { useLanguage } from "../context/LanguageContext"
 import trackService from "../services/trackService"
 
 export default function AllTracks() {
@@ -17,6 +18,7 @@ export default function AllTracks() {
     const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page")) || 1)
     const [totalPages, setTotalPages] = useState(1)
     const [totalTracks, setTotalTracks] = useState(0)
+    const { t } = useLanguage()
 
     const tracksPerPage = 6
 
@@ -70,8 +72,8 @@ export default function AllTracks() {
                     key={i}
                     onClick={() => handlePageChange(i)}
                     className={`px-4 py-2 rounded-lg font-medium transition ${i === currentPage
-                            ? "bg-orange-600 text-white"
-                            : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                        ? "bg-orange-600 text-white"
+                        : "bg-slate-700 text-slate-300 hover:bg-slate-600"
                         }`}
                 >
                     {i}
@@ -88,9 +90,9 @@ export default function AllTracks() {
             <main className="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold mb-2">All Tracks</h1>
+                    <h1 className="text-4xl font-bold mb-2">{t('allTracks')}</h1>
                     <p className="text-slate-400">
-                        {loading ? "Loading..." : `${totalTracks} tracks available`}
+                        {loading ? t('loading') : `${totalTracks} ${t('tracksAvailable')}`}
                     </p>
                 </div>
 
@@ -98,11 +100,11 @@ export default function AllTracks() {
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
                         <LoadingSpinner />
-                        <span className="ml-3 text-slate-400">Loading tracks...</span>
+                        <span className="ml-3 text-slate-400">{t('loading')}</span>
                     </div>
                 ) : tracks.length === 0 ? (
                     <div className="text-center py-20">
-                        <p className="text-slate-400 text-lg">No tracks available yet.</p>
+                        <p className="text-slate-400 text-lg">{t('noTracks')}</p>
                     </div>
                 ) : (
                     <>
@@ -130,7 +132,7 @@ export default function AllTracks() {
                                     className="px-4 py-2 rounded-lg font-medium transition bg-slate-700 text-slate-300 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                                 >
                                     <ChevronLeft className="w-5 h-5 mr-1" />
-                                    Previous
+                                    {t('previousPage')}
                                 </button>
 
                                 {/* Page Numbers */}
@@ -142,7 +144,7 @@ export default function AllTracks() {
                                     disabled={currentPage === totalPages}
                                     className="px-4 py-2 rounded-lg font-medium transition bg-slate-700 text-slate-300 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                                 >
-                                    Next
+                                    {t('nextPage')}
                                     <ChevronRight className="w-5 h-5 ml-1" />
                                 </button>
                             </div>
@@ -150,7 +152,7 @@ export default function AllTracks() {
                     </>
                 )}
             </main>
-            
+
             <AudioPlayer />
         </div>
     )

@@ -116,6 +116,11 @@ export const translations = {
         trackAdded: "Track added to playlist",
         trackRemoved: "Track removed from playlist",
 
+        // Pagination
+        previousPage: "Previous",
+        nextPage: "Next",
+        tracksAvailable: "tracks available",
+
         // Footer
         copyright: "© 2024 HungYenSound. All rights reserved.",
     },
@@ -234,6 +239,11 @@ export const translations = {
         logoutSuccess: "Đã đăng xuất",
         trackAdded: "Đã thêm vào playlist",
         trackRemoved: "Đã xóa khỏi playlist",
+
+        // Pagination
+        previousPage: "Trước",
+        nextPage: "Tiếp",
+        tracksAvailable: "bài hát",
 
         // Footer
         copyright: "© 2024 HungYenSound. Bảo lưu mọi quyền.",

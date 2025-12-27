@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Music, Search, User, Menu, X, LogOut } from "lucide-react"
 import LoginModal from "./LoginModal"
 import { useUser } from "../context/UserContext"
+import { useLanguage } from "../context/LanguageContext"
 
 export default function Navbar() {
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -12,6 +13,7 @@ export default function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const { user, logout } = useUser()
+  const { t } = useLanguage()
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -45,31 +47,31 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search songs, artists..."
+                placeholder={t('search')}
                 className="bg-slate-800/50 text-white px-4 py-2 rounded-full text-sm w-64 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
               <Search className="absolute right-3 top-2.5 text-slate-400 w-4 h-4" />
             </form>
             <div className="space-x-6">
               <Link to="/" className="text-orange-200 hover:text-white transition">
-                Home
+                {t('home')}
               </Link>
 
               <Link to="/playlists" className="text-orange-200 hover:text-white transition">
-                Playlists
+                {t('playlists')}
               </Link>
               {user && (
                 <Link to="/my-playlists" className="text-orange-200 hover:text-white transition">
-                  My Playlists
+                  {t('myPlaylists')}
                 </Link>
               )}
               {user?.role === "admin" && (
                 <>
                   <Link to="/admin/uploads" className="text-orange-200 hover:text-white transition">
-                    Uploads
+                    {t('uploads')}
                   </Link>
                   <Link to="/admin/users" className="text-orange-200 hover:text-white transition">
-                    Users
+                    {t('users')}
                   </Link>
                 </>
               )}
@@ -97,14 +99,14 @@ export default function Navbar() {
                       className="block px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-t-lg transition"
                       onClick={() => setShowProfileMenu(false)}
                     >
-                      View Profile
+                      {t('profile')}
                     </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-red-400 hover:text-red-300 hover:bg-slate-700 rounded-b-lg transition flex items-center"
                     >
                       <LogOut className="w-4 h-4 mr-2" />
-                      Logout
+                      {t('signOut')}
                     </button>
                   </div>
                 )}
@@ -115,7 +117,7 @@ export default function Navbar() {
                 className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-full text-sm font-medium transition flex items-center"
               >
                 <User className="mr-2 w-4 h-4" />
-                Sign In
+                {t('signIn')}
               </button>
             )}
             <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="md:hidden text-orange-200">
@@ -127,30 +129,30 @@ export default function Navbar() {
         {showMobileMenu && (
           <div className="md:hidden mt-4 space-y-2">
             <Link to="/" className="block text-orange-200 hover:text-white transition py-2">
-              Home
+              {t('home')}
             </Link>
 
             <Link to="/playlists" className="block text-orange-200 hover:text-white transition py-2">
-              Playlists
+              {t('playlists')}
             </Link>
             {user && (
               <>
                 <Link to="/profile" className="block text-orange-200 hover:text-white transition py-2">
-                  Profile
+                  {t('profile')}
                 </Link>
                 <Link to="/my-playlists" className="block text-orange-200 hover:text-white transition py-2">
-                  My Playlists
+                  {t('myPlaylists')}
                 </Link>
                 {user.role === "admin" && (
                   <Link to="/admin/uploads" className="block text-orange-200 hover:text-white transition py-2">
-                    Admin
+                    {t('adminPanel')}
                   </Link>
                 )}
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left text-red-400 hover:text-red-300 transition py-2"
                 >
-                  Logout
+                  {t('signOut')}
                 </button>
               </>
             )}

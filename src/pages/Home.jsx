@@ -8,10 +8,12 @@ import LoadingSpinner from "../components/LoadingSpinner"
 import TrackCard from "../components/TrackCard"
 import RightSidebar from "../components/RightSidebar"
 import { useAudio } from "../context/AudioContext"
+import { useLanguage } from "../context/LanguageContext"
 import trackService from "../services/trackService"
 
 export default function Home() {
   const { playTrack } = useAudio()
+  const { t } = useLanguage()
   const [tracks, setTracks] = useState([])
   const [loadingTracks, setLoadingTracks] = useState(true)
   const [playingRandom, setPlayingRandom] = useState(false)
@@ -71,15 +73,15 @@ export default function Home() {
               <div className="bg-gradient-to-r from-orange-800/30 to-indigo-800/30 rounded-2xl p-6 md:p-8 backdrop-blur-sm border border-slate-700/50">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   <div className="flex-1">
-                    <h1 className="text-3xl md:text-4xl font-bold mb-3">Stream Your Favorite Music</h1>
-                    <p className="text-slate-300 mb-5">Share and enjoy your favourite songs.</p>
+                    <h1 className="text-3xl md:text-4xl font-bold mb-3">{t('heroTitle')}</h1>
+                    <p className="text-slate-300 mb-5">{t('heroSubtitle')}</p>
                     <button
                       onClick={handlePlayRandom}
                       disabled={loadingTracks || playingRandom}
                       className="bg-orange-600 hover:bg-orange-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-3 rounded-full font-medium transition flex items-center gap-2 shadow-lg shadow-orange-500/20"
                     >
                       <Play className="w-5 h-5" fill="white" />
-                      {playingRandom ? "Loading..." : "Play Now"}
+                      {playingRandom ? t('loading') : t('playNow')}
                     </button>
                   </div>
                   <div className="hidden md:block">
@@ -97,15 +99,15 @@ export default function Home() {
             {tracks.length > 0 && (
               <section>
                 <div className="flex justify-between items-center mb-5">
-                  <h2 className="text-xl font-bold">Latest Tracks</h2>
+                  <h2 className="text-xl font-bold">{t('latestTracks')}</h2>
                   <Link to="/tracks" className="text-orange-400 hover:text-orange-300 transition flex items-center text-sm">
-                    View All <ChevronRight className="ml-1 w-4 h-4" />
+                    {t('viewAll')} <ChevronRight className="ml-1 w-4 h-4" />
                   </Link>
                 </div>
                 {loadingTracks ? (
                   <div className="flex items-center justify-center py-12">
                     <LoadingSpinner />
-                    <span className="ml-3 text-slate-400">Loading tracks...</span>
+                    <span className="ml-3 text-slate-400">{t('loading')}</span>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
