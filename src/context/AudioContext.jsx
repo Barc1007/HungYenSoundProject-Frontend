@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useRef, useEffect } from "react"
+import trackService from "../services/trackService"
 
 const AudioContext = createContext()
 
@@ -122,6 +123,12 @@ export const AudioProvider = ({ children }) => {
 
       await audio.play()
       setIsPlaying(true)
+
+      // Increment view count when track starts playing (fire and forget)
+      const trackId = track._id || track.id || track.mongoId
+      if (trackId) {
+        trackService.incrementViewCount(trackId).catch(() => { })
+      }
 
     } catch (err) {
       console.error("Playback failed:", err)
