@@ -124,10 +124,10 @@ export const AudioProvider = ({ children }) => {
       await audio.play()
       setIsPlaying(true)
 
-      // Increment view count when track starts playing (fire and forget)
+      // Increment play count when track starts playing (fire and forget)
       const trackId = track._id || track.id || track.mongoId
       if (trackId) {
-        trackService.incrementViewCount(trackId).catch(() => { })
+        trackService.incrementPlayCount(trackId).catch(() => { })
       }
 
     } catch (err) {
