@@ -1,7 +1,7 @@
 "use client"
 
 import { useAudio } from "../context/AudioContext"
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Heart, Menu, Repeat, Shuffle, X } from "lucide-react"
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Heart, Menu, Repeat, Shuffle, X, ChevronUp, ChevronDown } from "lucide-react"
 import { useState } from "react"
 
 export default function AudioPlayer() {
@@ -30,6 +30,7 @@ export default function AudioPlayer() {
 
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
   const [showQueue, setShowQueue] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const progressPercentage = duration ? (currentTime / duration) * 100 : 0
 
@@ -39,6 +40,10 @@ export default function AudioPlayer() {
 
   const handleLikeClick = () => {
     toggleLike()
+  }
+
+  const handleVolumeClick = () => {
+    setShowVolumeSlider(!showVolumeSlider)
   }
 
   // Get upcoming tracks (next 5 tracks after current)
@@ -51,9 +56,9 @@ export default function AudioPlayer() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-900/98 to-slate-900/95 backdrop-blur-xl border-t border-slate-700/50 shadow-2xl z-50">
-      {/* Progress Bar - Full Width at Top */}
+      {/* Progress Bar - Full Width at Top (larger on mobile for touch) */}
       <div className="absolute top-0 left-0 right-0 group">
-        <div className="relative h-1 bg-slate-800/50 overflow-hidden">
+        <div className="relative h-2 md:h-1 bg-slate-800/50 overflow-hidden">
           <div
             className="absolute h-full bg-gradient-to-r from-orange-500/20 via-orange-400/20 to-orange-500/20 transition-all duration-300"
             style={{ width: `${progressPercentage}%` }}
@@ -68,18 +73,219 @@ export default function AudioPlayer() {
             max="100"
             value={progressPercentage}
             onChange={(e) => seek((e.target.value / 100) * duration)}
-            className="absolute w-full h-full opacity-0 cursor-pointer z-10 group-hover:h-2 transition-all"
+            className="absolute w-full h-full opacity-0 cursor-pointer z-10"
           />
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 md:w-3 md:h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 md:transition-opacity"
             style={{ left: `${progressPercentage}%`, transform: `translate(-50%, -50%)` }}
           />
         </div>
       </div>
 
-      <div className="max-w-screen-2xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between gap-4">
+      <div className="max-w-screen-2xl mx-auto px-3 md:px-6 py-3 md:py-4 pt-4 md:pt-5">
+        {/* Mobile Layout */}
+        <div className="md:hidden">
+          {/* Compact Mobile View */}
+          <div className="flex items-center gap-3">
+            {/* Track Image */}
+            <div className="relative group flex-shrink-0">
+              <img
+                src={currentTrack.image || "/placeholder.svg"}
+                alt={currentTrack.title}
+                className="w-12 h-12 rounded-lg object-cover shadow-xl ring-2 ring-slate-700/50"
+              />
+            </div>
 
+            {/* Track Info */}
+            <div className="min-w-0 flex-1">
+              <h4 className="font-semibold text-white text-sm truncate">
+                {currentTrack.title}
+              </h4>
+              <p className="text-slate-400 text-xs truncate">
+                {currentTrack.artist}
+              </p>
+            </div>
+
+            {/* Mobile Controls */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleLikeClick}
+                className={`p-2 transition-all duration-200 ${isTrackLiked()
+                  ? 'text-orange-400'
+                  : 'text-slate-400'
+                  }`}
+                title={isTrackLiked() ? "Unlike" : "Like"}
+              >
+                <Heart className={`w-5 h-5 ${isTrackLiked() ? 'fill-current' : ''}`} />
+              </button>
+
+              <button
+                onClick={playPrevious}
+                className="p-2 text-slate-400 active:text-white active:scale-95 transition-all"
+              >
+                <SkipBack className="w-5 h-5 fill-current" />
+              </button>
+
+              <button
+                onClick={togglePlayPause}
+                className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-3 rounded-full shadow-xl shadow-orange-500/30 active:scale-95 transition-all"
+              >
+                {isPlaying ?
+                  <Pause className="w-5 h-5 fill-current" /> :
+                  <Play className="w-5 h-5 ml-0.5 fill-current" />
+                }
+              </button>
+
+              <button
+                onClick={playNext}
+                className="p-2 text-slate-400 active:text-white active:scale-95 transition-all"
+              >
+                <SkipForward className="w-5 h-5 fill-current" />
+              </button>
+
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-2 text-slate-400 active:text-white transition-all"
+              >
+                {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Expanded Mobile Controls */}
+          {isExpanded && (
+            <div className="mt-4 space-y-4 pb-2 animate-in slide-in-from-top-2 duration-200">
+              {/* Time Display */}
+              <div className="flex justify-between text-xs text-slate-400 px-1">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatTime(duration)}</span>
+              </div>
+
+              {/* Additional Controls */}
+              <div className="flex items-center justify-center gap-6">
+                <button
+                  onClick={toggleShuffle}
+                  className={`p-3 rounded-full transition-all ${isShuffle
+                    ? 'text-orange-400 bg-orange-500/10'
+                    : 'text-slate-400 active:text-white'
+                    }`}
+                >
+                  <Shuffle className="w-5 h-5" />
+                </button>
+
+                <button
+                  onClick={toggleRepeat}
+                  className={`p-3 rounded-full transition-all relative ${repeatMode > 0
+                    ? 'text-orange-400 bg-orange-500/10'
+                    : 'text-slate-400 active:text-white'
+                    }`}
+                >
+                  <Repeat className="w-5 h-5" />
+                  {repeatMode === 2 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-500 rounded-full text-[10px] flex items-center justify-center font-bold text-white">
+                      1
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={handleVolumeClick}
+                  className={`p-3 rounded-full transition-all ${showVolumeSlider
+                    ? 'text-orange-400 bg-orange-500/10'
+                    : 'text-slate-400 active:text-white'
+                    }`}
+                >
+                  {volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                </button>
+
+                <button
+                  onClick={() => setShowQueue(!showQueue)}
+                  className={`p-3 rounded-full transition-all ${showQueue
+                    ? 'text-orange-400 bg-orange-500/10'
+                    : 'text-slate-400 active:text-white'
+                    }`}
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Volume Slider (Mobile) */}
+              {showVolumeSlider && (
+                <div className="flex items-center gap-3 px-4 py-2 bg-slate-800/50 rounded-xl">
+                  <button onClick={toggleMute} className="text-slate-400">
+                    {volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  </button>
+                  <div className="flex-1 relative h-2 cursor-pointer">
+                    <div className="absolute w-full h-full bg-slate-700/50 rounded-full" />
+                    <div
+                      className="absolute h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full"
+                      style={{ width: `${volume * 100}%` }}
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={volume}
+                      onChange={(e) => setVolume(parseFloat(e.target.value))}
+                      className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-md"
+                      style={{ left: `${volume * 100}%`, transform: `translate(-50%, -50%)` }}
+                    />
+                  </div>
+                  <span className="text-xs text-slate-400 w-8">{Math.round(volume * 100)}%</span>
+                </div>
+              )}
+
+              {/* Queue Panel (Mobile) */}
+              {showQueue && (
+                <div className="bg-slate-800/50 rounded-xl overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/50">
+                    <h3 className="text-sm font-semibold text-white">Up Next</h3>
+                    <button
+                      onClick={() => setShowQueue(false)}
+                      className="text-slate-400 p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="max-h-48 overflow-y-auto">
+                    {upcomingTracks.length === 0 ? (
+                      <p className="text-slate-500 text-sm text-center py-6">No upcoming tracks</p>
+                    ) : (
+                      upcomingTracks.map((track, idx) => (
+                        <div
+                          key={track._id || track.id || idx}
+                          onClick={() => {
+                            playTrack(track, queue, currentIndex + 1 + idx)
+                            setShowQueue(false)
+                          }}
+                          className="flex items-center gap-3 px-4 py-3 active:bg-slate-700/50 cursor-pointer transition"
+                        >
+                          <span className="text-slate-500 text-xs w-4">{idx + 1}</span>
+                          <img
+                            src={track.image || "/placeholder.svg"}
+                            alt={track.title}
+                            className="w-10 h-10 rounded object-cover"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm text-white truncate">{track.title}</p>
+                            <p className="text-xs text-slate-400 truncate">{track.artist}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex items-center justify-between gap-4">
           {/* Left Section - Track Info */}
           <div className="flex items-center gap-4 w-[280px] min-w-0">
             <div className="relative group flex-shrink-0">
