@@ -35,9 +35,27 @@ export default function RightSidebar() {
                 const likedResponse = await trackService.getLikedTracks()
                 setLikedTracks((likedResponse.tracks || []).slice(0, 3))
 
+                // Load history from localStorage
                 const savedHistory = localStorage.getItem(`listeningHistory_${user._id || user.id}`)
                 if (savedHistory) {
-                    setHistory(JSON.parse(savedHistory).slice(0, 3))
+                    const historyItems = JSON.parse(savedHistory).slice(0, 3)
+
+                    // Fetch fresh track data from API to get updated playCount
+                    const updatedHistory = await Promise.all(
+                        historyItems.map(async (item) => {
+                            try {
+                                const trackId = item.track._id || item.track.id || item.track.mongoId
+                                if (trackId) {
+                                    const freshTrack = await trackService.getTrackById(trackId)
+                                    return { ...item, track: freshTrack || item.track }
+                                }
+                                return item
+                            } catch {
+                                return item // Keep original if fetch fails
+                            }
+                        })
+                    )
+                    setHistory(updatedHistory)
                 }
             } catch (err) {
                 console.error("Failed to load sidebar data:", err)
