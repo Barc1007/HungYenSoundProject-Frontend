@@ -220,28 +220,7 @@ export default function RightSidebar() {
                     </>
                 )}
 
-                {/* Divider */}
-                <div className="border-t border-slate-800" />
 
-                {/* Footer Links - SoundCloud Style */}
-                <div className="text-xs text-slate-500 space-y-2">
-                    <div className="flex flex-wrap gap-x-2 gap-y-1">
-                        <a href="#" className="hover:text-slate-300 transition">Legal</a>
-                        <span>·</span>
-                        <a href="#" className="hover:text-slate-300 transition">Privacy</a>
-                        <span>·</span>
-                        <a href="#" className="hover:text-slate-300 transition">Cookie Policy</a>
-                        <span>·</span>
-                        <a href="#" className="hover:text-slate-300 transition">Imprint</a>
-                    </div>
-                    <div className="flex flex-wrap gap-x-2 gap-y-1">
-                        <a href="#" className="hover:text-slate-300 transition">Charts</a>
-                        <span>·</span>
-                        <a href="#" className="hover:text-slate-300 transition">About</a>
-                        <span>·</span>
-                        <a href="#" className="hover:text-slate-300 transition">Blog</a>
-                    </div>
-                </div>
 
                 {/* Language Selector - SoundCloud Style */}
                 <div className="relative" ref={langDropdownRef}>
