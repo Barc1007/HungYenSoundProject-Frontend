@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import { X, Eye, EyeOff, Loader2, Music2, Sparkles, LogIn } from "lucide-react"
 import { useUser } from "../context/UserContext"
 
@@ -143,9 +144,13 @@ export default function LoginModal({ isOpen, onClose }) {
                 Remember me
               </label>
             </div>
-            <a href="#" className="text-sm text-orange-400 hover:text-orange-300 transition">
+            <Link
+              to="/forgot-password"
+              onClick={handleClose}
+              className="text-sm text-orange-400 hover:text-orange-300 transition"
+            >
               Forgot password?
-            </a>
+            </Link>
           </div>
 
           {/* Submit Button */}
