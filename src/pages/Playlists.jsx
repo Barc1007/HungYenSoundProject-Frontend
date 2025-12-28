@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Play, Music, Clock, TrendingUp, Sparkles } from "lucide-react"
+import { Play, Music, Clock, Sparkles } from "lucide-react"
 import Navbar from "../components/Navbar"
 import AudioPlayer from "../components/AudioPlayer"
 import LoadingSpinner from "../components/LoadingSpinner"
@@ -124,12 +124,6 @@ export default function Playlists() {
 
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-4 text-slate-500">
-                        {playlist.playCount && (
-                          <div className="flex items-center gap-1">
-                            <TrendingUp className="w-3.5 h-3.5" />
-                            <span>{playlist.playCount} plays</span>
-                          </div>
-                        )}
                         <div className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
                           <span>{playlist.songs?.length || 0} songs</span>
