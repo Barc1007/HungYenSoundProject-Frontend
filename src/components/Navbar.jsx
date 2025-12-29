@@ -160,7 +160,7 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-      <span className="ml-2"></span>
+      <span className="123456"></span>
 
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </>
