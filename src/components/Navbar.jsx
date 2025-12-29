@@ -159,6 +159,7 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+      <div className="md:hidden mt-4 space-y-2"></div>
 
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </>
