@@ -25,7 +25,7 @@ export const translations = {
         signOut: "Sign Out",
 
         // Hero Section
-        heroTitle: "Stream Your Favorite Music",
+        heroTitle: "Stream Your Favorite Musics",
         heroSubtitle: "Share and enjoy your favourite songs.",
         playNow: "Play Now",
 
