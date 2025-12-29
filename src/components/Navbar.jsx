@@ -73,9 +73,6 @@ export default function Navbar() {
                   <Link to="/admin/users" className="text-orange-200 hover:text-white transition">
                     {t('users')}
                   </Link>
-                  <Link to="/admin/users" className="text-orange-200 hover:text-white transition">
-                    {t('test')}
-                  </Link>
                 </>
               )}
             </div>
@@ -94,7 +91,6 @@ export default function Navbar() {
                     className="w-5 h-5 rounded-full mr-2 object-cover"
                   />
                   {user.name}
-                  <span className="ml-2">1234</span>
                 </button>
                 {showProfileMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-lg z-50">
@@ -162,7 +158,6 @@ export default function Navbar() {
                 </button>
               </>
             )}
-             <span className="ml-2">1234</span>
           </div>
         )}
       </nav>
