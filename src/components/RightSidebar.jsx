@@ -258,7 +258,7 @@ export default function RightSidebar() {
 
                 {/* Copyright */}
                 <p className="text-xs text-slate-600 pb-4">
-                    © 2024 HungYenSound
+                    © 2025 HungYenSound
                 </p>
             </div>
         </aside>
