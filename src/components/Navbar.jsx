@@ -73,6 +73,9 @@ export default function Navbar() {
                   <Link to="/admin/users" className="text-orange-200 hover:text-white transition">
                     {t('users')}
                   </Link>
+                  <button className="text-orange-200 hover:text-white transition">
+                    1234
+                  </button>
                 </>
               )}
             </div>
