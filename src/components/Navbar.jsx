@@ -91,7 +91,7 @@ export default function Navbar() {
                     className="w-5 h-5 rounded-full mr-2 object-cover"
                   />
                   {user.name}
-                  <span className="ml-2"></span>
+                  <span className="ml-2">1234</span>
                 </button>
                 {showProfileMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-lg z-50">
@@ -126,6 +126,7 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+        <span className="ml-2">1234</span>
 
         {showMobileMenu && (
           <div className="md:hidden mt-4 space-y-2">
@@ -160,7 +161,7 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-      <span className="123456"></span>
+      
 
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </>
