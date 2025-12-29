@@ -126,7 +126,7 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-        <span className="ml-2">1234</span>
+    
 
         {showMobileMenu && (
           <div className="md:hidden mt-4 space-y-2">
@@ -150,6 +150,7 @@ export default function Navbar() {
                     {t('adminPanel')}
                   </Link>
                 )}
+                <span className="ml-2">1234</span>
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left text-red-400 hover:text-red-300 transition py-2"
