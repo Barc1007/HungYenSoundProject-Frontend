@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar"
 import AudioPlayer from "../components/AudioPlayer"
 import LoadingSpinner from "../components/LoadingSpinner"
 import { useNotification } from "../context/NotificationContext"
+import { useLanguage } from "../context/LanguageContext"
 import { adminService } from "../services/adminService"
 
 export default function AdminUsers() {
@@ -23,6 +24,7 @@ export default function AdminUsers() {
     const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page")) || 1)
     const [totalPages, setTotalPages] = useState(1)
     const { showSuccess, showError } = useNotification()
+    const { t } = useLanguage()
 
     useEffect(() => {
         console.log('useEffect triggered, calling loadUsers')
@@ -162,8 +164,8 @@ export default function AdminUsers() {
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <p className="text-sm text-slate-400 uppercase tracking-widest mb-1">Admin</p>
-                            <h1 className="text-4xl font-bold">User Management</h1>
+                            <p className="text-sm text-slate-400 uppercase tracking-widest mb-1">{t('admin')}</p>
+                            <h1 className="text-4xl font-bold">{t('userManagement')}</h1>
                         </div>
                         <button
                             onClick={loadUsers}
@@ -171,7 +173,7 @@ export default function AdminUsers() {
                             className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition disabled:opacity-50"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                            Refresh
+                            {t('refresh')}
                         </button>
                     </div>
 
@@ -181,7 +183,7 @@ export default function AdminUsers() {
                             <div className="flex items-center gap-3">
                                 <Users className="w-8 h-8 text-blue-400" />
                                 <div>
-                                    <p className="text-slate-400 text-sm">Total Users</p>
+                                    <p className="text-slate-400 text-sm">{t('totalUsers')}</p>
                                     <p className="text-2xl font-bold">{stats.total}</p>
                                 </div>
                             </div>
@@ -191,7 +193,7 @@ export default function AdminUsers() {
                             <div className="flex items-center gap-3">
                                 <Users className="w-8 h-8 text-green-400" />
                                 <div>
-                                    <p className="text-slate-400 text-sm">Active</p>
+                                    <p className="text-slate-400 text-sm">{t('active')}</p>
                                     <p className="text-2xl font-bold text-green-400">{stats.active}</p>
                                 </div>
                             </div>
@@ -201,7 +203,7 @@ export default function AdminUsers() {
                             <div className="flex items-center gap-3">
                                 <Shield className="w-8 h-8 text-orange-400" />
                                 <div>
-                                    <p className="text-slate-400 text-sm">Admins</p>
+                                    <p className="text-slate-400 text-sm">{t('adminUsers')}</p>
                                     <p className="text-2xl font-bold text-orange-400">{stats.admins}</p>
                                 </div>
                             </div>
@@ -211,7 +213,7 @@ export default function AdminUsers() {
                             <div className="flex items-center gap-3">
                                 <UserX className="w-8 h-8 text-red-400" />
                                 <div>
-                                    <p className="text-slate-400 text-sm">Inactive</p>
+                                    <p className="text-slate-400 text-sm">{t('inactive')}</p>
                                     <p className="text-2xl font-bold text-red-400">{stats.inactive}</p>
                                 </div>
                             </div>
