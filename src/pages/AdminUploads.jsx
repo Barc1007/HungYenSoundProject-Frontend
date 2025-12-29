@@ -193,15 +193,15 @@ export default function AdminUploads() {
           </div>
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
             <p className="text-slate-400 text-sm mb-1">Pending Approval</p>
-            <p className="text-xl font-semibold text-yellow-400">{tracks.filter(t => t.approvalStatus === 'pending').length}</p>
+            <p className="text-xl font-semibold text-yellow-400">{tracks.filter(t => t.status === 'pending').length}</p>
           </div>
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
             <p className="text-slate-400 text-sm mb-1">Approved</p>
-            <p className="text-xl font-semibold text-green-400">{tracks.filter(t => t.approvalStatus === 'approved').length}</p>
+            <p className="text-xl font-semibold text-green-400">{tracks.filter(t => t.status === 'approved').length}</p>
           </div>
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
             <p className="text-slate-400 text-sm mb-1">Rejected</p>
-            <p className="text-xl font-semibold text-red-400">{tracks.filter(t => t.approvalStatus === 'rejected').length}</p>
+            <p className="text-xl font-semibold text-red-400">{tracks.filter(t => t.status === 'rejected').length}</p>
           </div>
         </section>
 
@@ -216,7 +216,7 @@ export default function AdminUploads() {
           >
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Pending Approval ({tracks.filter(t => t.approvalStatus === 'pending').length})
+              Pending Approval ({tracks.filter(t => t.status === 'pending').length})
             </div>
           </button>
           <button
@@ -228,7 +228,7 @@ export default function AdminUploads() {
           >
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4" />
-              Approved Tracks ({tracks.filter(t => t.approvalStatus === 'approved').length})
+              Approved Tracks ({tracks.filter(t => t.status === 'approved').length})
             </div>
           </button>
         </div>
