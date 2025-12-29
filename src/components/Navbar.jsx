@@ -75,7 +75,7 @@ export default function Navbar() {
                   </Link>
                   <Link to="/admin/users" className="text-orange-200 hover:text-white transition">
                     {t('test')}
-                  </link>
+                  </Link>
                 </>
               )}
             </div>
@@ -153,7 +153,7 @@ export default function Navbar() {
                     {t('adminPanel')}
                   </Link>
                 )}
-                <span className="block text-orange-200 hover:text-white transition py-2>1234</span>
+                
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left text-red-400 hover:text-red-300 transition py-2"
