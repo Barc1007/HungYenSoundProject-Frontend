@@ -1,5 +1,5 @@
 "use client"
-import { Heart, Play, Trash2 } from "lucide-react"
+import { Heart, Play } from "lucide-react"
 import { useState, useEffect } from "react"
 import Navbar from "../components/Navbar"
 import AudioPlayer from "../components/AudioPlayer"
@@ -32,14 +32,6 @@ export default function LikedSongs() {
         loadLikedTracks()
     }, [user])
 
-    const handleUnlike = async (trackId) => {
-        try {
-            await trackService.unlikeTrack(trackId)
-            setLikedTracks(likedTracks.filter(t => (t._id || t.id) !== trackId))
-        } catch (err) {
-            console.error("Failed to unlike track:", err)
-        }
-    }
 
     if (!user) {
         return (
@@ -107,12 +99,6 @@ export default function LikedSongs() {
                                     <p className="font-medium text-white truncate">{track.title}</p>
                                     <p className="text-sm text-slate-400 truncate">{track.artist}</p>
                                 </div>
-                                <button
-                                    onClick={() => handleUnlike(track._id || track.id)}
-                                    className="text-slate-400 hover:text-red-400 transition opacity-0 group-hover:opacity-100"
-                                >
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
                             </div>
                         ))}
                     </div>
