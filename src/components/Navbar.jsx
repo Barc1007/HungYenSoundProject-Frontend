@@ -158,6 +158,7 @@ export default function Navbar() {
                 </button>
               </>
             )}
+             <span className="ml-2">1234</span>
           </div>
         )}
       </nav>
