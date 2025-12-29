@@ -10,6 +10,7 @@ import LoadingSpinner from "../components/LoadingSpinner"
 import trackService from "../services/trackService"
 import { useAudio } from "../context/AudioContext"
 import { useNotification } from "../context/NotificationContext"
+import { useLanguage } from "../context/LanguageContext"
 
 const statusFilters = [
   { id: "all", label: "All" },
@@ -36,6 +37,7 @@ export default function AdminUploads() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const { playTrack } = useAudio()
   const { showSuccess, showError } = useNotification()
+  const { t } = useLanguage()
 
   const fetchTracks = async () => {
     try {
@@ -164,8 +166,8 @@ export default function AdminUploads() {
       <main className="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
         <div className="flex flex-wrap gap-4 justify-between items-center mb-8">
           <div>
-            <p className="text-sm text-slate-400 uppercase tracking-widest">Admin</p>
-            <h1 className="text-3xl font-bold">Upload Management</h1>
+            <p className="text-sm text-slate-400 uppercase tracking-widest">{t('admin')}</p>
+            <h1 className="text-3xl font-bold">{t('uploadManagement')}</h1>
           </div>
           <div className="flex gap-3">
             <button
@@ -174,33 +176,33 @@ export default function AdminUploads() {
               className="inline-flex items-center gap-2 bg-slate-800/60 hover:bg-slate-700/60 text-white px-4 py-2 rounded-full text-sm font-medium transition disabled:opacity-60"
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
-              Refresh
+              {t('refresh')}
             </button>
             <button
               onClick={() => setIsUploadModalOpen(true)}
               className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full text-sm font-medium transition"
             >
               <Upload className="w-4 h-4" />
-              Upload Track
+              {t('uploadTrackBtn')}
             </button>
           </div>
         </div>
 
         <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
-            <p className="text-slate-400 text-sm mb-1">Total Tracks</p>
+            <p className="text-slate-400 text-sm mb-1">{t('totalTracks')}</p>
             <p className="text-2xl font-bold">{stats.total}</p>
           </div>
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
-            <p className="text-slate-400 text-sm mb-1">Pending Approval</p>
+            <p className="text-slate-400 text-sm mb-1">{t('pendingApproval')}</p>
             <p className="text-xl font-semibold text-yellow-400">{tracks.filter(t => t.status === 'pending').length}</p>
           </div>
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
-            <p className="text-slate-400 text-sm mb-1">Approved</p>
+            <p className="text-slate-400 text-sm mb-1">{t('approved')}</p>
             <p className="text-xl font-semibold text-green-400">{tracks.filter(t => t.status === 'approved').length}</p>
           </div>
           <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4">
-            <p className="text-slate-400 text-sm mb-1">Rejected</p>
+            <p className="text-slate-400 text-sm mb-1">{t('rejected')}</p>
             <p className="text-xl font-semibold text-red-400">{tracks.filter(t => t.status === 'rejected').length}</p>
           </div>
         </section>
@@ -216,7 +218,7 @@ export default function AdminUploads() {
           >
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Pending Approval ({tracks.filter(t => t.status === 'pending').length})
+              {t('pendingApproval')} ({tracks.filter(tr => tr.status === 'pending').length})
             </div>
           </button>
           <button
@@ -228,7 +230,7 @@ export default function AdminUploads() {
           >
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4" />
-              Approved Tracks ({tracks.filter(t => t.status === 'approved').length})
+              {t('approvedTracks')} ({tracks.filter(tr => tr.status === 'approved').length})
             </div>
           </button>
         </div>
